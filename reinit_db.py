@@ -52,15 +52,15 @@ def reinit():
         (cat_ids["🍔 Burger"], "Double chiz", 40000, "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # Doner
-        (cat_ids["🥙 Doner"], "Standart", 25000, "https://images.unsplash.com/photo-1561651823-34fed0225304?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🥙 Doner"], "Standart", 25000, "https://images.unsplash.com/photo-1642990170659-c7028f1b6129?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
         (cat_ids["🥙 Doner"], "Big", 30000, "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
-        (cat_ids["🥙 Doner"], "Chiz", 35000, "https://images.unsplash.com/photo-1561651823-34fed0225304?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🥙 Doner"], "Chiz", 35000, "https://images.unsplash.com/photo-1642990170659-c7028f1b6129?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # KFC
-        (cat_ids["🍗 KFC"], "File strips", 90000, "https://images.unsplash.com/photo-1562967914-6cbb04bac8cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🍗 KFC"], "File strips", 90000, "https://images.unsplash.com/photo-1610440042657-412f5a04597b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
         (cat_ids["🍗 KFC"], "Qanot", 85000, "https://images.unsplash.com/photo-1606755456206-b25206cde27e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
         (cat_ids["🍗 KFC"], "Lunch box", 30000, "https://images.unsplash.com/photo-1569058242253-92a9c73f49bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
-        (cat_ids["🍗 KFC"], "Kfc xaggi", 30000, "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🍗 KFC"], "Kfc xaggi", 30000, "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # Xot-dog
         (cat_ids["🌭 Xot-dog"], "Mini", 10000, "https://images.unsplash.com/photo-1541214113241-21578d2d9b62?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
@@ -70,8 +70,8 @@ def reinit():
         (cat_ids["🌭 Xot-dog"], "Canada (45sm)", 25000, "https://images.unsplash.com/photo-1612392062631-94dd858cba88?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # Xaggi
-        (cat_ids["🥪 Xaggi"], "Standart", 35000, "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
-        (cat_ids["🥪 Xaggi"], "Big", 45000, "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🥪 Xaggi"], "Standart", 35000, "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🥪 Xaggi"], "Big", 45000, "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
         (cat_ids["🥪 Xaggi"], "Xot let", 28000, "https://images.unsplash.com/photo-1619860860774-1e2e17343432?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # Naggets
@@ -97,8 +97,8 @@ def reinit():
 
         # Ichimliklar
         (cat_ids["☕️ Ichimliklar"], "Choy", 3000, "https://images.unsplash.com/photo-1544145945-f904253d0c7b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
-        (cat_ids["☕️ Ichimliklar"], "Kofe", 5000, "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
-        (cat_ids["☕️ Ichimliklar"], "Kofe (Big)", 7000, "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["☕️ Ichimliklar"], "Kofe", 5000, "https://images.unsplash.com/photo-1534778101976-62847782c213?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["☕️ Ichimliklar"], "Kofe (Big)", 7000, "https://images.unsplash.com/photo-1534778101976-62847782c213?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
         (cat_ids["☕️ Ichimliklar"], "Choy mevali", 10000, "https://images.unsplash.com/photo-1520933906645-05999e103fe3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # Cocktails
@@ -108,7 +108,7 @@ def reinit():
 
         # Specials
         (cat_ids["🔥 Specials"], "Kfc BURGER (+0.25 Cola)", 33000, "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
-        (cat_ids["🔥 Specials"], "Kfc HAGGI (+0.25 Cola)", 38000, "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
+        (cat_ids["🔥 Specials"], "Kfc HAGGI (+0.25 Cola)", 38000, "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"),
 
         # Souslar
         (cat_ids["🥫 Souslar"], "Sous", 4000, "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60")
@@ -119,7 +119,7 @@ def reinit():
 
     conn.commit()
     conn.close()
-    print("Database re-initialized with stabilized images!")
+    print("Database re-initialized with specific photos!")
 
 if __name__ == "__main__":
     reinit()

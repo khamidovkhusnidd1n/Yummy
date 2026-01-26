@@ -12,15 +12,15 @@ MENU = {
         {"name": "Double chiz", "price": 40000, "image": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🥙 Doner": [
-        {"name": "Standart", "price": 25000, "image": "https://images.unsplash.com/photo-1561651823-34fed0225304?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Standart", "price": 25000, "image": "https://images.unsplash.com/photo-1642990170659-c7028f1b6129?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
         {"name": "Big", "price": 30000, "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
-        {"name": "Chiz", "price": 35000, "image": "https://images.unsplash.com/photo-1561651823-34fed0225304?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Chiz", "price": 35000, "image": "https://images.unsplash.com/photo-1642990170659-c7028f1b6129?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🍗 KFC": [
-        {"name": "File strips", "price": 90000, "image": "https://images.unsplash.com/photo-1562967914-6cbb04bac8cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "File strips", "price": 90000, "image": "https://images.unsplash.com/photo-1610440042657-412f5a04597b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
         {"name": "Qanot", "price": 85000, "image": "https://images.unsplash.com/photo-1606755456206-b25206cde27e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
         {"name": "Lunch box", "price": 30000, "image": "https://images.unsplash.com/photo-1569058242253-92a9c73f49bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
-        {"name": "Kfc xaggi", "price": 30000, "image": "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Kfc xaggi", "price": 30000, "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🌭 Xot-dog": [
         {"name": "Mini", "price": 10000, "image": "https://images.unsplash.com/photo-1541214113241-21578d2d9b62?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
@@ -30,8 +30,8 @@ MENU = {
         {"name": "Canada (45sm)", "price": 25000, "image": "https://images.unsplash.com/photo-1612392062631-94dd858cba88?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🥪 Xaggi": [
-        {"name": "Standart", "price": 35000, "image": "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
-        {"name": "Big", "price": 45000, "image": "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Standart", "price": 35000, "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Big", "price": 45000, "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
         {"name": "Xot let", "price": 28000, "image": "https://images.unsplash.com/photo-1619860860774-1e2e17343432?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🍗 Naggets": [
@@ -57,8 +57,8 @@ MENU = {
     ],
     "☕️ Ichimliklar": [
         {"name": "Choy", "price": 3000, "image": "https://images.unsplash.com/photo-1544145945-f904253d0c7b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
-        {"name": "Kofe", "price": 5000, "image": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
-        {"name": "Kofe (Big)", "price": 7000, "image": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Kofe", "price": 5000, "image": "https://images.unsplash.com/photo-1534778101976-62847782c213?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Kofe (Big)", "price": 7000, "image": "https://images.unsplash.com/photo-1534778101976-62847782c213?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
         {"name": "Choy mevali", "price": 10000, "image": "https://images.unsplash.com/photo-1520933906645-05999e103fe3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🍹 Cocktails": [
@@ -68,7 +68,7 @@ MENU = {
     ],
     "🔥 Specials": [
         {"name": "Kfc BURGER (+0.25 Cola)", "price": 33000, "image": "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
-        {"name": "Kfc HAGGI (+0.25 Cola)", "price": 38000, "image": "https://images.unsplash.com/photo-1550507992-eb63ffee0847?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
+        {"name": "Kfc HAGGI (+0.25 Cola)", "price": 38000, "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},
     ],
     "🥫 Souslar": [
         {"name": "Sous", "price": 4000, "image": "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"},

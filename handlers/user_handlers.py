@@ -46,11 +46,9 @@ async def show_admin_menu(message: types.Message):
     user_id = message.from_user.id
     if user_id in (SUPER_ADMINS + WORKERS):
         is_super = user_id in SUPER_ADMINS
-        await message.answer("Admin paneli faollashtirildi.", reply_markup=akb.admin_reply_menu(is_super))
         await message.answer(
-            build_admin_dashboard_text(user_id),
-            reply_markup=akb.admin_profile_kb(is_super=is_super),
-            parse_mode="Markdown",
+            "Siz hozir Admin menyusidasiz.\n\nBoshqaruv tugmalari pastda paydo bo'ldi.", 
+            reply_markup=akb.admin_reply_menu(is_super)
         )
 
 @router.message(F.text == "🏠 Foydalanuvchi menyusi")

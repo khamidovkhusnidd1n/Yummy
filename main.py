@@ -56,6 +56,7 @@ def main():
         asyncio.run(run_polling())
 
 if __name__ == "__main__":
+    # Deployment timestamp: 2026-01-27 09:20
     try:
         main()
     except KeyboardInterrupt:

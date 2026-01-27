@@ -47,6 +47,7 @@ class Database:
                 user_id INTEGER PRIMARY KEY,
                 role TEXT DEFAULT 'admin',
                 permissions TEXT DEFAULT '',
+                is_active INTEGER DEFAULT 1,
                 added_at TIMESTAMP
             )
         """)
@@ -200,16 +201,20 @@ class Database:
 
     # --- Admin Management ---
     def add_admin(self, user_id, role='admin', permissions=''):
-        self.cursor.execute("INSERT OR REPLACE INTO admins (user_id, role, permissions, added_at) VALUES (?, ?, ?, ?)",
+        self.cursor.execute("INSERT OR REPLACE INTO admins (user_id, role, permissions, is_active, added_at) VALUES (?, ?, ?, 1, ?)",
                             (user_id, role, permissions, datetime.now()))
         self.conn.commit()
 
     def remove_admin(self, user_id):
-        self.cursor.execute("DELETE FROM admins WHERE user_id = ?", (user_id,))
+        # Instead of deleting, we set is_active = 0
+        self.cursor.execute("UPDATE admins SET is_active = 0 WHERE user_id = ?", (user_id,))
         self.conn.commit()
 
-    def get_admin(self, user_id):
-        return self.cursor.execute("SELECT * FROM admins WHERE user_id = ?", (user_id,)).fetchone()
+    def get_admin(self, user_id, active_only=True):
+        query = "SELECT * FROM admins WHERE user_id = ?"
+        if active_only:
+            query += " AND is_active = 1"
+        return self.cursor.execute(query, (user_id,)).fetchone()
 
     def get_all_admins(self):
         return self.cursor.execute("SELECT * FROM admins").fetchall()

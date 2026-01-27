@@ -94,7 +94,7 @@ def build_admin_dashboard_text(user_id):
 async def admin_dashboard_callback(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     admin = db.get_admin(user_id)
-    if not admin:
+    if not admin or (user_id not in (SUPER_ADMINS + WORKERS)):
         return await callback.answer("Sizda admin huquqi yo'q.", show_alert=True)
         
     is_super = admin[1] == 'super_admin'
@@ -242,8 +242,10 @@ async def admin_stats_msg(message: types.Message):
 
 @router.message(F.text == "📊 Dashboard")
 async def admin_dashboard_msg(message: types.Message):
-    admin = db.get_admin(message.from_user.id)
-    if not admin: return
+    user_id = message.from_user.id
+    admin = db.get_admin(user_id)
+    if not admin or (user_id not in (SUPER_ADMINS + WORKERS)):
+        return await message.answer("Sizda admin huquqi yo'q.")
     
     is_super = admin[1] == 'super_admin'
     text = build_admin_dashboard_text(message.from_user.id)
@@ -344,8 +346,26 @@ async def am_toggle_perm(callback: types.CallbackQuery):
 @router.callback_query(F.data.startswith("am_del_"))
 async def am_delete(callback: types.CallbackQuery):
     target_id = int(callback.data.split("_")[2])
+    
+    if target_id == callback.from_user.id:
+        return await callback.answer("O'zingizni o'chirib bo'lmaydi!", show_alert=True)
+    
     db.remove_admin(target_id)
     await callback.answer("Admin muvaffaqiyatli o'chirildi. Endi u admin panelga kira olmaydi.", show_alert=True)
+    
+    # Notify and update keyboard of the removed user
+    try:
+        from keyboards.user_keyboards import main_menu
+        lang = db.get_user_lang(target_id)
+        # is_admin is False now because they are removed
+        await callback.bot.send_message(
+            target_id, 
+            "Siz adminlikdan chetlashtirildingiz.", 
+            reply_markup=main_menu(lang, is_admin=False)
+        )
+    except:
+        pass
+        
     await am_list(callback)
 
 @router.message(F.text == "🛍 Buyurtmalar")
@@ -630,7 +650,7 @@ async def back_to_main_callback(callback: types.CallbackQuery):
     from keyboards.user_keyboards import main_menu
     user_id = callback.from_user.id
     lang = db.get_user_lang(user_id)
-    is_admin = bool(db.get_admin(user_id))
+    is_admin = (user_id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(user_id))
     await callback.message.answer("🏠 Foydalanuvchi menyusiga qaytdingiz.", reply_markup=main_menu(lang, is_admin))
     await callback.answer()
 

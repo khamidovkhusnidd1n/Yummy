@@ -36,7 +36,8 @@ def main():
     from config import SUPER_ADMINS, WORKERS
     from database import db
     for admin_id in SUPER_ADMINS:
-        db.add_admin(admin_id, role='super_admin')
+        if not db.get_admin(admin_id):
+            db.add_admin(admin_id, role='super_admin', permissions='manage_admins,menu,orders,promos,mailing,stats')
     for worker_id in WORKERS:
         if not db.get_admin(worker_id):
             db.add_admin(worker_id, role='admin', permissions='orders')

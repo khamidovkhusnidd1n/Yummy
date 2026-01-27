@@ -820,6 +820,7 @@
                 sheet.classList.remove('translate-y-full');
             }, 10);
             renderCartItems();
+            updateCartUI();
         }
         function closeCart() {
             overlay.style.opacity = "0";
@@ -856,6 +857,7 @@
             const promoResult = validatePromoCode(promoCode);
             const discount = calculateDiscount(foodTotal, promoResult);
             const finalTotal = foodTotal > 0 ? foodTotal + deliveryFee - discount : 0;
+            const deliveryMessage = total >= DELIVERY_THRESHOLD ? S.delivery_free : S.delivery_fee_note;
 
             const deliveryMessage = total >= DELIVERY_THRESHOLD ? S.delivery_free : S.delivery_fee_note;
 
@@ -890,7 +892,7 @@
             const promoCode = document.getElementById('promo-input').value.trim().toUpperCase();
             const promoResult = validatePromoCode(promoCode);
             const discount = calculateDiscount(total, promoResult);
-            const deliveryFee = 15000;
+            const deliveryFee = total >= DELIVERY_THRESHOLD ? 0 : BASE_DELIVERY_FEE;
             const finalTotal = total > 0 ? total + deliveryFee - discount : 0;
 
             // Show promo validation dialog if code entered

@@ -300,30 +300,30 @@
                     "🔥 Specials": "🔥 Maxsus", "🥫 Souslar": "🥫 Souslar"
                 },
                 'delivery_fee_label': '(bepul)',
-                'delivery_free': '50 000 so'mdan ortiq yetkazish bepul!',
-                'delivery_fee_note': '50 000 so'mgacha yetkazish 15 000 so'm'
+                'delivery_free': "50 000 so'mdan ortiq yetkazish bepul!",
+                'delivery_fee_note': "50 000 so'mgacha yetkazish 15 000 so'm"
             },
             ru: {
-                'search_placeholder': '??? ????? ??????? ??',
-                'top_choice': '??? ?????',
-                'featured_title': '??? ?????? ????????',
-                'featured_sub': '??? ???????? 100% ???????????!',
-                'not_found': '?????? ?? ???????... ??',
-                'cart_title': '???????',
-                'cart_sub': '???? ????????? ?????',
-                'cart_empty': '??????? ????? ??',
-                'food_label': '?????',
-                'deliv_label': '????????',
-                'order_btn': '???????? ?????',
-                'confirm_btn': '???????????',
-                'promo_placeholder': '???????? (?????????????)',
+                'search_placeholder': 'Что будем искать? 🔎',
+                'top_choice': 'ТОП ВЫБОР',
+                'featured_title': 'Что поедим сегодня?',
+                'featured_sub': 'Все продукты 100% натуральные!',
+                'not_found': 'Ничего не найдено... ☕️',
+                'cart_title': 'Корзина',
+                'cart_sub': 'Ваши выбранные блюда',
+                'cart_empty': 'Корзина пуста 🛒',
+                'food_label': 'Блюда',
+                'deliv_label': 'Доставка',
+                'order_btn': 'ОФОРМИТЬ ЗАКАЗ',
+                'confirm_btn': 'ПОДТВЕРДИТЬ',
+                'promo_placeholder': 'Промокод (необязательно)',
                 'cats': {
-                    "?? Lavash": "?? ?????", "?? Burger": "?? ??????", "?? Doner": "?? ?????",
-                    "?? KFC": "?? KFC", "?? Xot-dog": "?? ???-???", "?? Xaggi": "?? ?????",
-                    "?? Naggets": "?? ????????", "?? Pishloqli yostiqchalar": "?? ?????? ?????????",
-                    "?? Klab sandwich": "?? ????", "?? Fri": "?? ???", "?? Somsa": "?? ?????",
-                    "?? Ichimliklar": "?? ???????", "?? Cocktails": "?? ????????",
-                    "?? Specials": "?? ?????", "?? Souslar": "?? ?????"
+                    "🌯 Lavash": "🌯 Лаваш", "🍔 Burger": "🌯 Бургер", "🥙 Doner": "🥙 Донер",
+                    "🍗 KFC": "🍗 KFC", "🌭 Xot-dog": "🌭 Хот-дог", "🥪 Xaggi": "🥪 Хагги",
+                    "🍗 Naggets": "🍗 Наггетсы", "🧀 Pishloqli yostiqchalar": "🧀 Сырные подушечки",
+                    "🥪 Klab sandwich": "🥪 Клаб", "🍟 Fri": "🍟 Фри", "🥟 Somsa": "🥟 Сомса",
+                    "☕️ Ichimliklar": "☕️ Напитки", "🍹 Cocktails": "🍹 Коктейли",
+                    "🔥 Specials": "🔥 Акции", "🥫 Souslar": "🥫 Соусы"
                 },
                 'delivery_fee_label': '(бесплатно)',
                 'delivery_free': 'Доставка бесплатна от 50 000 сум!',
@@ -352,8 +352,8 @@
                     "🔥 Specials": "🔥 Specials", "🥫 Souslar": "🥫 Sauces"
                 },
                 'delivery_fee_label': '(free)',
-                'delivery_free': 'Delivery free over 50,000 so'm!',
-                'delivery_fee_note': 'Delivery up to 50,000 so'm costs 15,000 so'm'
+                'delivery_free': "Delivery free over 50,000 so'm!",
+                'delivery_fee_note': "Delivery up to 50,000 so'm costs 15,000 so'm"
             }
         };
 
@@ -801,7 +801,13 @@
             const finalTotal = total > 0 ? total + deliveryFee : 0;
             const deliveryMessage = total >= DELIVERY_THRESHOLD ? S.delivery_free : S.delivery_fee_note;
 
-            document.getElementById('cart-total').innerHTML = `<div class="text-right"><p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">${S.food_label}: ${total.toLocaleString()} so'm</p><p class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-2">${S.deliv_label}: ${deliveryFee.toLocaleString()} so'm</p><p class="text-4xl font-black tracking-tighter text-red-600">${finalTotal.toLocaleString()} so'm</p><p class="text-[10px] font-bold uppercase tracking-widest mt-2 ${total >= DELIVERY_THRESHOLD ? 'text-emerald-500' : 'text-yellow-500'}">${deliveryMessage}</p></div>`;
+            document.getElementById('cart-total').innerHTML = `
+                <div class="text-right">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">${S.food_label}: ${total.toLocaleString()} so'm</p>
+                    <p class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-2">${S.deliv_label}: ${deliveryFee.toLocaleString()} so'm</p>
+                    <p class="text-4xl font-black tracking-tighter text-red-600">${finalTotal.toLocaleString()} so'm</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest mt-2 ${total >= DELIVERY_THRESHOLD ? 'text-emerald-500' : 'text-yellow-500'}">${deliveryMessage}</p>
+                </div>`;
         }
         const modal = document.getElementById('cart-modal'),
             sheet = document.getElementById('cart-sheet'),
@@ -844,16 +850,18 @@
                 `).join('');
             }
 
-            const deliveryFee = 15000;
+            const deliveryFee = total >= DELIVERY_THRESHOLD ? 0 : BASE_DELIVERY_FEE;
             const foodTotal = total;
             const promoCode = document.getElementById('promo-input').value.trim().toUpperCase();
             const promoResult = validatePromoCode(promoCode);
             const discount = calculateDiscount(foodTotal, promoResult);
             const finalTotal = foodTotal > 0 ? foodTotal + deliveryFee - discount : 0;
 
+            const deliveryMessage = total >= DELIVERY_THRESHOLD ? S.delivery_free : S.delivery_fee_note;
+
             let discountHTML = '';
             if (promoResult.valid && discount > 0) {
-                discountHTML = `<p class="text-[11px] text-green-500 font-bold uppercase mb-1">✓ Chegirma: -${discount.toLocaleString()} so'm</p>`;
+                discountHTML = `<p class="text-[11px] text-emerald-500 font-bold uppercase mb-1">? Chegirma: -${discount.toLocaleString()} so'm</p>`;
             }
 
             document.getElementById('cart-total').innerHTML = `<div class="text-right">
@@ -861,6 +869,7 @@
                 <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase mb-1">${S.deliv_label}: ${deliveryFee.toLocaleString()} so'm</p>
                 ${discountHTML}
                 <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500 mt-2">${finalTotal.toLocaleString()} so'm</p>
+                <p class="text-[10px] font-bold uppercase tracking-widest mt-2 ${total >= DELIVERY_THRESHOLD ? 'text-emerald-500' : 'text-amber-400'}">${deliveryMessage}</p>
             </div>`;
         }
 

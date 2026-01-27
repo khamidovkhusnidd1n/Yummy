@@ -232,7 +232,9 @@ async def finalize_order(callback: types.CallbackQuery, state: FSMContext):
     )
     db.add_user(user_id, user_name, user_username, data['phone'])
 
+    is_admin = (user_id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(user_id))
     await callback.message.edit_text(s['order_received'].format(id=order_id))
+    await callback.message.answer("🏠 Foydalanuvchi menyusi", reply_markup=kb.main_menu(lang, is_admin))
     
     # Notify Admin (Worker)
     admin_msg = f"🆕 Yangi buyurtma #{order_id}!\n\n"

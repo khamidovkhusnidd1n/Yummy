@@ -717,8 +717,10 @@ async def reject_order(callback: types.CallbackQuery):
     lang = db.get_user_lang(user_id)
     s = STRINGS[lang]
 
+    from keyboards.user_keyboards import main_menu
+    is_admin = (user_id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(user_id))
     await callback.message.edit_text(callback.message.text + "\n\n❌ Rejected")
-    await callback.bot.send_message(user_id, s['order_cancelled'], parse_mode="Markdown")
+    await callback.bot.send_message(user_id, s['order_cancelled'], reply_markup=main_menu(lang, is_admin), parse_mode="Markdown")
     await callback.answer()
 
 @router.callback_query(F.data.startswith("preparing_"))
@@ -759,6 +761,8 @@ async def complete_order(callback: types.CallbackQuery):
     lang = db.get_user_lang(user_id)
     s = STRINGS[lang]
 
+    from keyboards.user_keyboards import main_menu
+    is_admin = (user_id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(user_id))
     await callback.message.edit_text(callback.message.text + "\n\n🏁 Completed")
-    await callback.bot.send_message(user_id, s['sms_completed'].format(id=order_id), parse_mode="Markdown")
+    await callback.bot.send_message(user_id, s['sms_completed'].format(id=order_id), reply_markup=main_menu(lang, is_admin), parse_mode="Markdown")
     await callback.answer()

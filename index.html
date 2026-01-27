@@ -208,7 +208,14 @@
     <script>
         const tg = window.Telegram.WebApp;
         const urlParams = new URLSearchParams(window.location.search);
-        const CURRENT_LANG = (urlParams.get('lang') || 'uz').toLowerCase().split('-')[0];
+        const STORAGE_KEY = 'yummy_lang';
+        const SUPPORTED_LANGS = ['uz', 'ru', 'en'];
+        const queryLang = urlParams.get('lang');
+        let persistedLang = null;
+        try { persistedLang = localStorage.getItem(STORAGE_KEY); } catch (error) { persistedLang = null; }
+        let CURRENT_LANG = (queryLang || persistedLang || 'uz').toLowerCase().split('-')[0];
+        if (!SUPPORTED_LANGS.includes(CURRENT_LANG)) CURRENT_LANG = 'uz';
+        try { localStorage.setItem(STORAGE_KEY, CURRENT_LANG); } catch (error) { }
 
         const LANG_STRINGS = {
             uz: {
@@ -410,6 +417,10 @@
         let cart = [];
         let idCounter = 1;
         const FLAT_ITEMS = [];
+        const CATEGORIES = Object.keys(MENU_DATA);
+        let currentCategoryIndex = 0;
+        let isLoadingMore = false;
+        let paginationMode = false;
 
         Object.keys(MENU_DATA).forEach(cat => {
             MENU_DATA[cat].forEach(item => {
@@ -430,33 +441,54 @@
             }).join('');
         }
 
+        function renderCategorySection(cat) {
+            const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
+            return `
+                <div id="section-${safeId}" class="menu-section mb-10" data-category="${cat}">
+                    <div class="px-6 mb-4">
+                        <h2 class="text-xl font-black tracking-tighter text-gray-900 dark:text-white flex items-center gap-2">
+                            <span class="w-1 h-6 bg-red-600 rounded-full"></span>
+                            ${translate(cat, 'cat')}
+                        </h2>
+                    </div>
+                    <div class="px-6 grid grid-cols-2 gap-3">
+                        ${MENU_DATA[cat].map(item => renderProductCard(item)).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         function renderMenu(searchTerm = "") {
             const container = document.getElementById('menu-sections');
             if (searchTerm) {
+                paginationMode = false;
                 const filtered = FLAT_ITEMS.filter(i => translate(i.raw_name).toLowerCase().includes(searchTerm.toLowerCase()));
                 container.innerHTML = `<div class="px-6 grid grid-cols-2 gap-4">${filtered.map(item => renderProductCard(item)).join('')}</div>`;
                 if (!filtered.length) container.innerHTML = `<div class="py-20 text-center text-gray-400 font-bold">${S.not_found}</div>`;
                 return;
             }
 
-            container.innerHTML = Object.keys(MENU_DATA).map(cat => {
-                const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
-                return `
-                    <div id="section-${safeId}" class="menu-section mb-10" data-category="${cat}">
-                        <div class="px-6 mb-4">
-                            <h2 class="text-xl font-black tracking-tighter text-gray-900 dark:text-white flex items-center gap-2">
-                                <span class="w-1 h-6 bg-red-600 rounded-full"></span>
-                                ${translate(cat, 'cat')}
-                            </h2>
-                        </div>
-                        <div class="px-6 grid grid-cols-2 gap-3">
-                            ${MENU_DATA[cat].map(item => renderProductCard(item)).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            paginationMode = true;
+            currentCategoryIndex = 0;
+            container.innerHTML = '';
+            
+            // Load all categories at once
+            for (let i = 0; i < CATEGORIES.length; i++) {
+                const cat = CATEGORIES[i];
+                const html = renderCategorySection(cat);
+                container.innerHTML += html;
+            }
+            currentCategoryIndex = CATEGORIES.length;
+            
             setTimeout(initScrollSpy, 100);
         }
+
+        function loadMoreMenus(count = 2) {
+            // No longer needed with new approach, but kept for compatibility
+            if (isLoadingMore || !paginationMode) return;
+            isLoadingMore = false;
+        }
+
         function renderProductCard(item) {
             const rawName = item.raw_name || item.n;
             const name = translate(rawName);

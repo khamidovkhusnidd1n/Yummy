@@ -33,7 +33,7 @@ async def set_language(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     db.set_user_lang(user_id, lang)
     
-    is_admin = user_id in (SUPER_ADMINS + WORKERS)
+    is_admin = bool(db.get_admin(user_id))
     s = STRINGS[lang]
     await callback.message.edit_text(s['welcome'].format(name=callback.from_user.full_name))
     await callback.message.answer(".", reply_markup=kb.main_menu(lang, is_admin))
@@ -54,8 +54,10 @@ async def show_admin_menu(message: types.Message):
 
 @router.message(F.text == "🏠 Foydalanuvchi menyusi")
 async def back_to_user_menu(message: types.Message):
-    lang = db.get_user_lang(message.from_user.id)
-    await message.answer("🏠 Foydalanuvchi menyusiga qaytdingiz.", reply_markup=kb.main_menu(lang, is_admin=True))
+    user_id = message.from_user.id
+    lang = db.get_user_lang(user_id)
+    is_admin = bool(db.get_admin(user_id))
+    await message.answer("🏠 Foydalanuvchi menyusiga qaytdingiz.", reply_markup=kb.main_menu(lang, is_admin))
 
 @router.message(F.text.in_([STR_UZ['location_btn_menu'], STR_RU['location_btn_menu'], STR_EN['location_btn_menu']]))
 async def show_location(message: types.Message):

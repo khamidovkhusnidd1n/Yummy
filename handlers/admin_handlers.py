@@ -628,8 +628,10 @@ async def admin_mail_confirm(callback: types.CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "back_to_main")
 async def back_to_main_callback(callback: types.CallbackQuery):
     from keyboards.user_keyboards import main_menu
-    lang = db.get_user_lang(callback.from_user.id)
-    await callback.message.answer("🏠 Foydalanuvchi menyusiga qaytdingiz.", reply_markup=main_menu(lang, is_admin=True))
+    user_id = callback.from_user.id
+    lang = db.get_user_lang(user_id)
+    is_admin = bool(db.get_admin(user_id))
+    await callback.message.answer("🏠 Foydalanuvchi menyusiga qaytdingiz.", reply_markup=main_menu(lang, is_admin))
     await callback.answer()
 
 # ... (rest of existing worker order handlers) ...

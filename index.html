@@ -524,6 +524,57 @@
             sections.forEach(s => observer.observe(s));
         }
 
+        const HEADER_OFFSET = 140;
+        const AUTO_SCROLL_THRESHOLD = 80;
+        let autoLastScrollY = window.scrollY;
+        let autoScrollTimer = null;
+        let autoScrolling = false;
+
+        function getNearestSection() {
+            const sections = Array.from(document.querySelectorAll('.menu-section'));
+            if (!sections.length) return null;
+            let best = sections[0];
+            let bestDist = Math.abs(best.getBoundingClientRect().top - HEADER_OFFSET);
+            for (const sec of sections) {
+                const rect = sec.getBoundingClientRect();
+                const dist = Math.abs(rect.top - HEADER_OFFSET);
+                if (dist < bestDist) { bestDist = dist; best = sec; }
+            }
+            return best;
+        }
+
+        function scrollToSection(section) {
+            if (!section) return;
+            autoScrolling = true;
+            const y = section.offsetTop - HEADER_OFFSET;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            setTimeout(() => { autoScrolling = false; }, 600);
+        }
+
+        function autoAdvanceIfNeeded() {
+            if (isScrollingByClick || autoScrolling) return;
+            const dirDown = window.scrollY > autoLastScrollY;
+            autoLastScrollY = window.scrollY;
+            if (!dirDown) return;
+
+            const current = getNearestSection();
+            if (!current) return;
+
+            const bottomPosition = current.offsetTop + current.offsetHeight;
+            const viewportBottom = window.scrollY + window.innerHeight;
+            if (viewportBottom < bottomPosition - AUTO_SCROLL_THRESHOLD) return;
+
+            const sections = Array.from(document.querySelectorAll('.menu-section'));
+            const idx = sections.indexOf(current);
+            const next = idx >= 0 ? sections[idx + 1] : null;
+            if (next) scrollToSection(next);
+        }
+
+        window.addEventListener('scroll', () => {
+            clearTimeout(autoScrollTimer);
+            autoScrollTimer = setTimeout(autoAdvanceIfNeeded, 130);
+        }, { passive: true });
+
         function updateCartUI() {
             const count = cart.reduce((sum, i) => sum + i.quantity, 0);
             const countEl = document.getElementById('cart-count');
@@ -574,7 +625,7 @@
 
         document.getElementById('cart-btn').onclick = openCart;
         overlay.onclick = closeCart;
-       document.geElementById('clear-cart').onclick = () => { cart = []; updateCartUI(); closeCart(); };
+       document.getElementById('clear-cart').onclick = () => { cart = []; updateCartUI(); closeCart(); };
         document.getElementById('checkout-btn').onclick = () => {
             const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
             const promo = document.getElementById('promo-input').value.trim();

@@ -144,7 +144,18 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 1rem;
-            background: linear-gradient(180deg, rgba(12, 12, 12, 0.08), rgba(12, 12, 12, 0.9));
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.9) 100%);
+        }
+
+        .promo-card:active,
+        .product-card:active {
+            transform: scale(0.95);
+        }
+
+        .promo-card,
+        .product-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .promo-card-badge {
@@ -379,7 +390,7 @@
                 id: 'promo_shourma',
                 name: 'SHOURMA',
                 price: 15000,
-                image: 'images/mazza.png',
+                image: 'images/shourma_promo.jpg',
                 badge: 'Yangi',
                 label: 'SHOURMA',
                 subtext: "15 000 / 30 000",

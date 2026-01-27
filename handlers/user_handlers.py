@@ -236,7 +236,8 @@ async def finalize_order(callback: types.CallbackQuery, state: FSMContext):
     method_str = "🛵 Kuryer orqali" if data.get('method') == 'delivery' else "🏃 O'zi boradi (Self-pickup)"
     admin_msg += f"🛒 Usul: {method_str}\n"
     
-    admin_msg += f"📍 Manzil: {data['maps_url'] if data.get('maps_url') else 'N/A (O\'zim boraman)'}\n\n"
+    loc_val = data.get('maps_url') or "Mavjud emas (O'zi boradi)"
+    admin_msg += f"📍 Manzil: {loc_val}\n\n"
     admin_msg += f"🧾 Taomlar:\n{data['items_str']}\n\n"
     admin_msg += f"💰 Jami: {data['final_total']:,} so'm"
 

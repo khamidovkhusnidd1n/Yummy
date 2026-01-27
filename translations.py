@@ -5,7 +5,7 @@ STRINGS = {
         'main_menu_btn': "🚀 Yummy App",
         'phone_req': "Telefon raqamingizni yuboring:",
         'phone_btn': "📞 Telefon raqamni yuborish",
-        'location_req': "Joylashuvingizni yuboring (geolokatsiya) yoki manzilni matn shaklida yozing:",
+        'location_req': "Iltimos, manzilni matn shaklida yozib yuboring (Masalan: Yangiyo'l, Saxrniy Havas yonida):",
         'location_btn': "📍 Joylashuvni yuborish",
         'confirm_summary': "📊 **Buyurtmangizni tekshiring:**\n\n🍱 **Taomlar:**\n{items}\n\n📍 **Manzil:** {location}\n💰 **Jami:** {total:,} so'm\n\nHamma ma'lumotlar to'g'rimi?",
         'confirm_btn': "✅ Tasdiqlash",

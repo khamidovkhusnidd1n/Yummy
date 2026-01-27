@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, ReplyKeyboardRemove
 from translations import STRINGS
 
 def lang_keyboard():
@@ -39,8 +39,9 @@ def delivery_method_kb(lang='uz'):
 
 def location_keyboard(lang='uz'):
     s = STRINGS[lang]
-    kb = [[KeyboardButton(text=s['location_btn'], request_location=True)]]
-    return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+    # No button, just text input needed, but we can provide a small back button or similar if needed
+    # For now, just return None or a simple keyboard to clear previous one
+    return ReplyKeyboardRemove()
 
 def order_confirm_kb(lang='uz'):
     s = STRINGS[lang]

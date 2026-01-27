@@ -52,27 +52,27 @@ def reinit():
         (cat_ids["🍔 Burger"], "Double chiz", 40000, "images/double_burger.png"),
 
         # Doner
-        (cat_ids["🥙 Doner"], "Standart", 25000, "images/lavash.png"),
-        (cat_ids["🥙 Doner"], "Big", 30000, "images/lavash.png"),
-        (cat_ids["🥙 Doner"], "Chiz", 35000, "images/lavash.png"),
+        (cat_ids["🥙 Doner"], "Standart", 25000, "images/image2/donar.png"),
+        (cat_ids["🥙 Doner"], "Big", 30000, "images/image2/donar.png"),
+        (cat_ids["🥙 Doner"], "Chiz", 35000, "images/image2/donar.png"),
 
         # KFC
         (cat_ids["🍗 KFC"], "File strips", 90000, "images/kfc_strips.png"),
         (cat_ids["🍗 KFC"], "Qanot", 85000, "images/kfc_wings.png"),
         (cat_ids["🍗 KFC"], "Lunch box", 30000, "images/kfc_lunch.png"),
-        (cat_ids["🍗 KFC"], "Kfc xaggi", 30000, "images/sandwich.png"),
+        (cat_ids["🍗 KFC"], "Kfc xaggi", 30000, "images/image2/xaggi.png"),
 
         # Xot-dog
-        (cat_ids["🌭 Xot-dog"], "Mini", 10000, "images/hotdog.png"),
-        (cat_ids["🌭 Xot-dog"], "Twins", 17000, "images/hotdog.png"),
-        (cat_ids["🌭 Xot-dog"], "Big (45sm)", 22000, "images/hotdog.png"),
-        (cat_ids["🌭 Xot-dog"], "Super (45sm)", 25000, "images/hotdog.png"),
+        (cat_ids["🌭 Xot-dog"], "Mini", 10000, "images/image2/hot_dog.png"),
+        (cat_ids["🌭 Xot-dog"], "Twins", 17000, "images/image2/hot_dog.png"),
+        (cat_ids["🌭 Xot-dog"], "Big (45sm)", 22000, "images/image2/hot_dog.png"),
+        (cat_ids["🌭 Xot-dog"], "Super (45sm)", 25000, "images/image2/hot_dog.png"),
         (cat_ids["🌭 Xot-dog"], "Canada (45sm)", 25000, "images/hotdog_canada.png"),
 
         # Xaggi
-        (cat_ids["🥪 Xaggi"], "Standart", 35000, "images/sandwich.png"),
-        (cat_ids["🥪 Xaggi"], "Big", 45000, "images/sandwich.png"),
-        (cat_ids["🥪 Xaggi"], "Xot let", 28000, "images/sandwich.png"),
+        (cat_ids["🥪 Xaggi"], "Standart", 35000, "images/image2/xaggi.png"),
+        (cat_ids["🥪 Xaggi"], "Big", 45000, "images/image2/xaggi.png"),
+        (cat_ids["🥪 Xaggi"], "Xot let", 28000, "images/image2/xaggi.png"),
 
         # Naggets
         (cat_ids["🍗 Naggets"], "Naggets", 22000, "images/naggets.png"),
@@ -96,22 +96,22 @@ def reinit():
         (cat_ids["🥟 Somsa"], "Kartoshka", 5000, "images/somsa.png"),
 
         # Ichimliklar
-        (cat_ids["☕️ Ichimliklar"], "Choy", 3000, "images/hot_drinks.png"),
-        (cat_ids["☕️ Ichimliklar"], "Kofe", 5000, "images/hot_drinks.png"),
-        (cat_ids["☕️ Ichimliklar"], "Kofe (Big)", 7000, "images/hot_drinks.png"),
-        (cat_ids["☕️ Ichimliklar"], "Choy mevali", 10000, "images/hot_drinks.png"),
+        (cat_ids["☕️ Ichimliklar"], "Choy", 3000, "images/image2/tea.png"),
+        (cat_ids["☕️ Ichimliklar"], "Kofe", 5000, "images/image2/coffee.png"),
+        (cat_ids["☕️ Ichimliklar"], "Kofe (Big)", 7000, "images/image2/coffee.png"),
+        (cat_ids["☕️ Ichimliklar"], "Choy mevali", 10000, "images/image2/tea_via_fruits.png"),
 
         # Cocktails
-        (cat_ids["🍹 Cocktails"], "Tropic", 15000, "images/drinks.png"),
-        (cat_ids["🍹 Cocktails"], "Moxito", 15000, "images/drinks.png"),
-        (cat_ids["🍹 Cocktails"], "O'rmon mevalari", 15000, "images/drinks.png"),
+        (cat_ids["🍹 Cocktails"], "Tropic", 15000, "images/image2/tropic.png"),
+        (cat_ids["🍹 Cocktails"], "Moxito", 15000, "images/image2/moxito.png"),
+        (cat_ids["🍹 Cocktails"], "O'rmon mevalari", 15000, "images/image2/forest_fruits.png"),
 
         # Specials
-        (cat_ids["🔥 Specials"], "Kfc BURGER (+0.25 Cola)", 33000, "images/burger.png"),
-        (cat_ids["🔥 Specials"], "Kfc HAGGI (+0.25 Cola)", 38000, "images/sandwich.png"),
+        (cat_ids["🔥 Specials"], "Kfc BURGER (+0.25 Cola)", 33000, "images/image2/kfc_burger.png"),
+        (cat_ids["🔥 Specials"], "Kfc HAGGI (+0.25 Cola)", 38000, "images/image2/kfc_haggi_cola.png"),
 
         # Souslar
-        (cat_ids["🥫 Souslar"], "Sous", 4000, "images/mazza.png")
+        (cat_ids["🥫 Souslar"], "Sous", 4000, "images/image2/sous.png")
     ]
 
     for cat_id, name, price, img in products:
@@ -119,7 +119,7 @@ def reinit():
 
     conn.commit()
     conn.close()
-    print("Database re-initialized with local image paths!")
+    print("Database re-initialized with user's final images!")
 
 if __name__ == "__main__":
     reinit()

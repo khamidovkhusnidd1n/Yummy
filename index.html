@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Yummy - Premium Delivery</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="menu_data.js?v=1769508120.8934684"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -119,7 +120,7 @@
             position: relative;
             border-radius: 38px;
             overflow: hidden;
-            min-height: 320px;
+            min-height: 220px;
             border: 1px solid rgba(0, 0, 0, 0.1);
             background: #000;
             box-shadow: 0 25px 45px -35px rgba(0, 0, 0, 0.6);
@@ -142,7 +143,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 1.5rem;
+            padding: 1rem;
             background: linear-gradient(180deg, rgba(12, 12, 12, 0.08), rgba(12, 12, 12, 0.9));
         }
 
@@ -161,8 +162,8 @@
         }
 
         .promo-card-price {
-            font-size: 2.2rem;
-            line-height: 1;
+            font-size: 1.2rem;
+            line-height: 1.2;
             font-weight: 900;
             color: #fff;
         }
@@ -208,18 +209,7 @@
 
     <!-- Featured -->
     <section class="mt-28 px-6">
-        <div class="flex flex-col gap-2">
-            <span id="top-choice-label"
-                class="bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-full w-fit tracking-widest uppercase inline-block">TOP
-                CHOICE</span>
-            <h2 id="featured-title"
-                class="text-3xl font-black tracking-tight text-gray-900 dark:text-white leading-snug">
-                What shall we eat today?
-            </h2>
-            <p id="featured-sub" class="text-gray-600 dark:text-gray-200 text-sm font-bold">All ingredients are 100%
-                natural!</p>
-        </div>
-        <div id="promo-grid" class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2"></div>
+        <div id="promo-grid" class="mt-6 grid grid-cols-2 gap-3"></div>
     </section>
 
     <!-- Categories -->
@@ -380,30 +370,48 @@
                 name: 'Kfc BURGER',
                 price: 33000,
                 image: 'images/image2/kfc_burger.png',
-                badge: '0.25 Cola Bonus',
+                badge: 'Combo',
                 label: 'Kfc BURGER',
-                subtext: "Kfc HAGGI ? 37 000 so'm",
-                secondary: "0.25 Cola bilan to'ldirilgan combo"
+                subtext: "33 000 so'm",
+                secondary: "0.25 Cola bilan"
             },
             {
-                id: 'promo_mazza',
-                name: 'MAZZA',
-                price: 30000,
+                id: 'promo_shourma',
+                name: 'SHOURMA',
+                price: 15000,
                 image: 'images/mazza.png',
-                badge: 'Yangilik',
-                label: 'MAZZA',
-                subtext: "Katta 30 000 / Mini 15 000 so'm",
-                secondary: "Yangi ta'm va sabzavotli elementlar"
+                badge: 'Yangi',
+                label: 'SHOURMA',
+                subtext: "15 000 / 30 000",
+                secondary: ""
             }
         ];
+
+        const PROMO_CODES = {
+            'YUMMY10': { discount: 10, type: 'percent' },
+            'YUMMY5000': { discount: 5000, type: 'fixed' },
+            'WELCOME': { discount: 15, type: 'percent' }
+        };
+
+        function validatePromoCode(code) {
+            if (!code) return { valid: false, discount: 0 };
+            const promo = PROMO_CODES[code.toUpperCase()];
+            if (!promo) return { valid: false, discount: 0 };
+            return { valid: true, ...promo };
+        }
+
+        function calculateDiscount(total, promoResult) {
+            if (!promoResult.valid) return 0;
+            if (promoResult.type === 'percent') {
+                return Math.floor(total * promoResult.discount / 100);
+            }
+            return promoResult.discount;
+        }
 
         const S = LANG_STRINGS[CURRENT_LANG] || LANG_STRINGS['uz'];
 
         // Apply translations to static elements
         document.getElementById('search-input').placeholder = S.search_placeholder;
-        document.getElementById('top-choice-label').innerText = S.top_choice;
-        document.getElementById('featured-title').innerText = S.featured_title;
-        document.getElementById('featured-sub').innerText = S.featured_sub;
         document.getElementById('cart-title').innerText = S.cart_title;
         document.getElementById('cart-sub').innerText = S.cart_sub;
         document.getElementById('checkout-btn').querySelector('span').innerText = S.order_btn;
@@ -618,10 +626,9 @@
                             <span class="promo-card-badge">${item.badge}</span>
                         </div>
                         <div>
-                            <p class="text-white text-2xl font-black mb-1">${item.label}</p>
+                            <p class="text-white text-base font-black mb-0.5">${item.label}</p>
                             <p class="promo-card-price">${priceText}</p>
-                            <p class="promo-card-secondary">${item.subtext}</p>
-                            <p class="promo-card-secondary">${item.secondary}</p>
+                            <p class="text-[10px] text-white/70 font-bold">${item.subtext}</p>
                         </div>
                     </div>
                 </div>
@@ -691,7 +698,7 @@
         }
 
         const HEADER_OFFSET = 140;
-        const AUTO_SCROLL_THRESHOLD = 150;
+        const AUTO_SCROLL_THRESHOLD = 200;
         let autoLastScrollY = window.scrollY;
         let autoScrollTimer = null;
         let autoScrolling = false;
@@ -715,13 +722,14 @@
             autoScrolling = true;
             const y = section.offsetTop - HEADER_OFFSET;
             window.scrollTo({ top: y, behavior: 'smooth' });
-            setTimeout(() => { autoScrolling = false; }, 700);
+            setTimeout(() => { autoScrolling = false; }, 1200);
         }
 
         function autoAdvanceIfNeeded() {
             if (isScrollingByClick || autoScrolling) return;
             const now = Date.now();
-            if (now - lastAutoAdvanceTime < 1000) return;
+            // Increased minimum time between auto-advances (2 seconds)
+            if (now - lastAutoAdvanceTime < 2500) return;
 
             const dirDown = window.scrollY > autoLastScrollY;
             autoLastScrollY = window.scrollY;
@@ -733,6 +741,7 @@
             const bottomPosition = current.offsetTop + current.offsetHeight;
             const viewportBottom = window.scrollY + window.innerHeight;
 
+            // Increased threshold so scroll completes fully before advancing
             if (viewportBottom < bottomPosition - AUTO_SCROLL_THRESHOLD) return;
 
             const sections = Array.from(document.querySelectorAll('.menu-section'));
@@ -747,7 +756,8 @@
 
         window.addEventListener('scroll', () => {
             clearTimeout(autoScrollTimer);
-            autoScrollTimer = setTimeout(autoAdvanceIfNeeded, 200);
+            // Increased debounce delay from 200 to 400ms
+            autoScrollTimer = setTimeout(autoAdvanceIfNeeded, 400);
         }, { passive: true });
 
         function updateCartUI() {
@@ -792,21 +802,37 @@
             else {
                 container.innerHTML = cart.map(item => `
                     <div class="flex items-center gap-5 animate-item">
-                        <div class="w-16 h-16 rounded-2xl bg-gray-50 overflow-hidden shrink-0"><img src="${item.image}" class="w-full h-full object-cover"></div>
-                        <div class="grow"><h4 class="font-bold text-sm leading-tight">${item.name}</h4><p class="text-red-500 font-black text-xs mt-1">${item.price.toLocaleString()} so'm</p></div>
-                        <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-800 rounded-2xl p-1">
-                            <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 rounded-xl bg-white dark:bg-zinc-700 shadow-sm flex items-center justify-center font-bold">-</button>
-                            <span class="text-xs font-bold w-4 text-center">${item.quantity}</span>
-                            <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 rounded-xl bg-white dark:bg-zinc-700 shadow-sm flex items-center justify-center font-bold">+</button>
+                        <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-zinc-800 overflow-hidden shrink-0 shadow-md"><img src="${item.image}" class="w-full h-full object-cover"></div>
+                        <div class="grow">
+                            <h4 class="font-bold text-sm leading-tight text-gray-900 dark:text-white">${item.name}</h4>
+                            <p class="text-red-500 font-extrabold text-sm mt-1">${item.price.toLocaleString()} so'm</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gradient-to-r from-red-50 to-orange-50 dark:from-zinc-800 dark:to-zinc-700 rounded-2xl p-2 shadow-sm">
+                            <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 rounded-lg bg-white dark:bg-zinc-600 shadow-sm flex items-center justify-center font-bold text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-zinc-500 transition-colors">−</button>
+                            <span class="text-sm font-black w-6 text-center text-gray-900 dark:text-white">${item.quantity}</span>
+                            <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 rounded-lg bg-white dark:bg-zinc-600 shadow-sm flex items-center justify-center font-bold text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-zinc-500 transition-colors">+</button>
                         </div>
                     </div>
                 `).join('');
             }
-            const deliveryFee = 15000, finalTotal = total > 0 ? total + deliveryFee : 0;
+
+            const deliveryFee = 15000;
+            const foodTotal = total;
+            const promoCode = document.getElementById('promo-input').value.trim().toUpperCase();
+            const promoResult = validatePromoCode(promoCode);
+            const discount = calculateDiscount(foodTotal, promoResult);
+            const finalTotal = foodTotal > 0 ? foodTotal + deliveryFee - discount : 0;
+
+            let discountHTML = '';
+            if (promoResult.valid && discount > 0) {
+                discountHTML = `<p class="text-[11px] text-green-500 font-bold uppercase mb-1">✓ Chegirma: -${discount.toLocaleString()} so'm</p>`;
+            }
+
             document.getElementById('cart-total').innerHTML = `<div class="text-right">
-                <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">${S.food_label}: ${total.toLocaleString()} so'm</p>
-                <p class="text-[10px] text-red-500 font-bold uppercase mb-2">${S.deliv_label}: ${deliveryFee.toLocaleString()} so'm</p>
-                <p class="text-3xl font-black text-red-600">${finalTotal.toLocaleString()} so'm</p>
+                <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">${S.food_label}: ${foodTotal.toLocaleString()} so'm</p>
+                <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase mb-1">${S.deliv_label}: ${deliveryFee.toLocaleString()} so'm</p>
+                ${discountHTML}
+                <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500 mt-2">${finalTotal.toLocaleString()} so'm</p>
             </div>`;
         }
 
@@ -824,18 +850,70 @@
         document.getElementById('clear-cart').onclick = () => { cart = []; updateCartUI(); closeCart(); };
         document.getElementById('checkout-btn').onclick = () => {
             const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-            const promo = document.getElementById('promo-input').value.trim();
-            const payload = { type: 'order', items: cart, total: (total + 15000), promo_code: promo || null };
+            const promoCode = document.getElementById('promo-input').value.trim().toUpperCase();
+            const promoResult = validatePromoCode(promoCode);
+            const discount = calculateDiscount(total, promoResult);
+            const deliveryFee = 15000;
+            const finalTotal = total > 0 ? total + deliveryFee - discount : 0;
 
-            const send = () => { tg.sendData(JSON.stringify(payload)); tg.close(); };
-            try { const cached = localStorage.getItem('yummy_last_geo'); if (cached) payload.location = JSON.parse(cached); } catch (e) { }
+            // Show promo validation dialog if code entered
+            if (promoCode && !promoResult.valid) {
+                alert('❌ Noto\'g\'ri promo kod!');
+                return;
+            }
+
+            // Show confirmation with promo details
+            let confirmMsg = `📋 Buyurtma tasdiqlash:\n\n`;
+            confirmMsg += `🍔 Taomlar: ${total.toLocaleString()} so'm\n`;
+            confirmMsg += `🚚 Yetkazish: ${deliveryFee.toLocaleString()} so'm\n`;
+            if (promoResult.valid && discount > 0) {
+                confirmMsg += `✅ Chegirma: -${discount.toLocaleString()} so'm\n`;
+            }
+            confirmMsg += `\n💰 Jami: ${finalTotal.toLocaleString()} so'm`;
+
+            if (!confirm(confirmMsg)) return;
+
+            const payload = {
+                type: 'order',
+                items: cart,
+                total: finalTotal,
+                promo_code: promoCode || null,
+                discount: discount,
+                delivery_fee: deliveryFee,
+                food_total: total
+            };
+
+            const send = () => {
+                document.getElementById('checkout-btn').disabled = true;
+                document.getElementById('checkout-btn').innerHTML = '<span>YUBORISH...</span>';
+                setTimeout(() => {
+                    tg.sendData(JSON.stringify(payload));
+                    tg.close();
+                }, 500);
+            };
+
+            try {
+                const cached = localStorage.getItem('yummy_last_geo');
+                if (cached) payload.location = JSON.parse(cached);
+            } catch (e) { }
+
             if (!navigator.geolocation) return send();
+
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    payload.location = { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy, ts: Date.now() };
-                    try { localStorage.setItem('yummy_last_geo', JSON.stringify(payload.location)); } catch (e) { }
+                    payload.location = {
+                        lat: pos.coords.latitude,
+                        lon: pos.coords.longitude,
+                        accuracy: pos.coords.accuracy,
+                        ts: Date.now()
+                    };
+                    try {
+                        localStorage.setItem('yummy_last_geo', JSON.stringify(payload.location));
+                    } catch (e) { }
                     send();
-                }, () => send(), { enableHighAccuracy: true, timeout: 4000 }
+                },
+                () => send(),
+                { enableHighAccuracy: true, timeout: 4000 }
             );
         };
 

@@ -43,6 +43,29 @@ class Database:
             )
         """)
         self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                user_id INTEGER PRIMARY KEY,
+                full_name TEXT,
+                username TEXT,
+                phone TEXT,
+                lang TEXT DEFAULT 'uz'
+            )
+        """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                items TEXT,
+                total_price INTEGER,
+                promo_code TEXT,
+                discount_amount INTEGER DEFAULT 0,
+                method TEXT,
+                location TEXT,
+                status TEXT DEFAULT 'pending',
+                created_at TIMESTAMP
+            )
+        """)
+        self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS admins (
                 user_id INTEGER PRIMARY KEY,
                 role TEXT DEFAULT 'admin',
@@ -53,10 +76,10 @@ class Database:
         """)
         self.conn.commit()
 
-    def add_user(self, user_id, full_name, phone):
+    def add_user(self, user_id, full_name, username, phone):
         # Update user info but don't overwrite language if it exists
-        self.cursor.execute("INSERT INTO users (user_id, full_name, phone) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET full_name=excluded.full_name, phone=excluded.phone", 
-                            (user_id, full_name, phone))
+        self.cursor.execute("INSERT INTO users (user_id, full_name, username, phone) VALUES (?, ?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET full_name=excluded.full_name, username=excluded.username, phone=excluded.phone", 
+                            (user_id, full_name, username, phone))
         self.conn.commit()
 
     def set_user_lang(self, user_id, lang):
@@ -67,9 +90,11 @@ class Database:
         res = self.cursor.execute("SELECT lang FROM users WHERE user_id = ?", (user_id,)).fetchone()
         return res[0] if res else 'uz'
 
-    def create_order(self, user_id, items, total_price, location=None):
-        self.cursor.execute("INSERT INTO orders (user_id, items, total_price, location, created_at) VALUES (?, ?, ?, ?, ?)",
-                            (user_id, items, total_price, location, datetime.now()))
+    def create_order(self, user_id, items, total_price, promo_code=None, discount_amount=0, method=None, location=None):
+        self.cursor.execute("""
+            INSERT INTO orders (user_id, items, total_price, promo_code, discount_amount, method, location, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, items, total_price, promo_code, discount_amount, method, location, datetime.now()))
         self.conn.commit()
         return self.cursor.lastrowid
 
@@ -102,7 +127,13 @@ class Database:
         self.conn.commit()
 
     def get_all_orders(self):
-        return self.cursor.execute("SELECT order_id, user_id, items, total_price, status, location, created_at FROM orders").fetchall()
+        return self.cursor.execute("""
+            SELECT o.order_id, o.user_id, u.full_name, u.username, u.phone, 
+                   o.items, o.total_price, o.promo_code, o.discount_amount, 
+                   o.method, o.location, o.status, o.created_at
+            FROM orders o
+            LEFT JOIN users u ON o.user_id = u.user_id
+        """).fetchall()
 
     def get_top_products(self):
         # This is a bit complex as items are stored as a string. 

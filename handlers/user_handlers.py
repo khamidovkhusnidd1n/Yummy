@@ -221,8 +221,16 @@ async def finalize_order(callback: types.CallbackQuery, state: FSMContext):
     user_name = callback.from_user.full_name
     user_username = f"@{callback.from_user.username}" if callback.from_user.username else "Noma'lum"
     
-    order_id = db.create_order(user_id, data['items_str'], data['final_total'], data['location'])
-    db.add_user(user_id, user_name, data['phone'])
+    order_id = db.create_order(
+        user_id=user_id,
+        items=data['items_str'],
+        total_price=data['final_total'],
+        promo_code=data.get('promo_code'),
+        discount_amount=data.get('discount_amount', 0),
+        method=data.get('method'),
+        location=data.get('location')
+    )
+    db.add_user(user_id, user_name, user_username, data['phone'])
 
     await callback.message.edit_text(s['order_received'].format(id=order_id))
     

@@ -45,6 +45,10 @@ def main():
     # If RENDER_EXTERNAL_URL is set, use webhooks
     if WEBHOOK_HOST:
         dp.startup.register(on_startup)
+        async def on_startup_scheduler(bot: Bot):
+            asyncio.create_task(daily_report_scheduler(bot))
+        dp.startup.register(on_startup_scheduler)
+
         app = web.Application()
         webhook_requests_handler = SimpleRequestHandler(
             dispatcher=dp,
@@ -61,9 +65,51 @@ def main():
         async def run_polling():
             logging.basicConfig(level=logging.INFO, stream=sys.stdout)
             print("Starting polling mode (Local)...")
+            asyncio.create_task(daily_report_scheduler(bot))
             await dp.start_polling(bot)
         
         asyncio.run(run_polling())
+
+async def daily_report_scheduler(bot: Bot):
+    from config import SUPER_ADMINS
+    from handlers.admin_handlers import generate_excel_report
+    from aiogram import types
+    import os
+    
+    while True:
+        try:
+            now = datetime.now()
+            # Calculate time until midnight
+            # If it's already past midnight, it will wait for the next midnight
+            target_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
+            if now >= target_time:
+                from datetime import timedelta
+                target_time += timedelta(days=1)
+            
+            wait_seconds = (target_time - now).total_seconds()
+            print(f"Daily report scheduled in {wait_seconds} seconds.")
+            await asyncio.sleep(wait_seconds)
+            
+            # Generate and send report
+            file_path = await generate_excel_report()
+            for admin_id in SUPER_ADMINS:
+                try:
+                    await bot.send_document(
+                        admin_id, 
+                        types.FSInputFile(file_path), 
+                        caption=f"📝 Kunlik hisobot: {datetime.now().strftime('%Y-%m-%d')}"
+                    )
+                except Exception as e:
+                    print(f"Error sending daily report to {admin_id}: {e}")
+            
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            
+            # Wait a bit to avoid double send in the same second
+            await asyncio.sleep(60)
+        except Exception as e:
+            print(f"Error in daily_report_scheduler: {e}")
+            await asyncio.sleep(3600) # Wait an hour before retrying if error
 
 if __name__ == "__main__":
     # Deployment timestamp: 2026-01-27 09:24 FORCE

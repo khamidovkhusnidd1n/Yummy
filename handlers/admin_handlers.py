@@ -656,7 +656,21 @@ async def back_to_main_callback(callback: types.CallbackQuery):
 
 # ... (rest of existing worker order handlers) ...
 
+async def generate_excel_report():
+    import pandas as pd
+    orders = db.get_all_orders()
+    columns = [
+        'ID', 'User ID', 'Mijoz Ismi', 'Username', 'Tel', 
+        'Mahsulotlar', 'Jami Summa', 'Promo Kod', 'Chegirma', 
+        'Usul', 'Manzil/Location', 'Holat', 'Sana'
+    ]
+    df = pd.DataFrame(orders, columns=columns)
+    file_path = "yummy_report.xlsx"
+    df.to_excel(file_path, index=False)
+    return file_path
+
 @router.message(Command("report"))
+@router.callback_query(F.data == "admin_report")
 @router.callback_query(F.data == "admin_report")
 async def get_report_callback(event: types.Message | types.CallbackQuery):
     if not db.has_permission(event.from_user.id, 'stats'):
@@ -665,13 +679,7 @@ async def get_report_callback(event: types.Message | types.CallbackQuery):
         return
     message = event if isinstance(event, types.Message) else event.message
     try:
-        import pandas as pd
-        orders = db.get_all_orders()
-        df = pd.DataFrame(orders, columns=['ID', 'User ID', 'Items', 'Total Price', 'Status', 'Location', 'Date'])
-        
-        file_path = "yummy_report.xlsx"
-        df.to_excel(file_path, index=False)
-        
+        file_path = await generate_excel_report()
         await message.answer_document(types.FSInputFile(file_path), caption="📊 Barcha buyurtmalar bo'yicha hisobot (Excel)")
         os.remove(file_path)
     except Exception as e:

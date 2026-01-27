@@ -10,17 +10,17 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Pishloqli",
             "p": 35000,
-            "i": "images/lavash.png"
+            "i": "images/image2/images3/lavash_cheese.png"
         },
         {
             "n": "Big",
             "p": 40000,
-            "i": "images/lavash.png"
+            "i": "images/image2/images3/lavash_big.png"
         },
         {
             "n": "Big pishloq",
             "p": 45000,
-            "i": "images/lavash.png"
+            "i": "images/image2/images3/lavash_cheese.png"
         }
     ],
     "🍔 Burger": [
@@ -32,17 +32,17 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Chizburger",
             "p": 33000,
-            "i": "images/burger.png"
+            "i": "images/image2/images3/cheeseburger.png"
         },
         {
             "n": "Double",
             "p": 35000,
-            "i": "images/double_burger.png"
+            "i": "images/image2/images3/double_burger.png"
         },
         {
             "n": "Double chiz",
             "p": 40000,
-            "i": "images/double_burger.png"
+            "i": "images/image2/images3/double_cheese.png"
         }
     ],
     "🥙 Doner": [
@@ -54,51 +54,51 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Big",
             "p": 30000,
-            "i": "images/image2/donar.png"
+            "i": "images/image2/images3/donerbig.png"
         },
         {
             "n": "Chiz",
             "p": 35000,
-            "i": "images/image2/donar.png"
+            "i": "images/image2/images3/donercheese.png"
         }
     ],
     "🍗 KFC": [
         {
             "n": "File strips",
             "p": 90000,
-            "i": "images/kfc_strips.png"
+            "i": "images/image2/images3/Fillet_strips.png"
         },
         {
             "n": "Qanot",
             "p": 85000,
-            "i": "images/kfc_wings.png"
+            "i": "images/image2/images3/wings.png"
         },
         {
             "n": "Lunch box",
             "p": 30000,
-            "i": "images/kfc_lunch.png"
+            "i": "images/image2/images3/lunch_box.png"
         },
         {
             "n": "Kfc xaggi",
             "p": 30000,
-            "i": "images/image2/xaggi.png"
+            "i": "images/image2/images3/KFC_xaggi.png"
         }
     ],
     "🌭 Xot-dog": [
         {
             "n": "Mini",
             "p": 10000,
-            "i": "images/image2/hot_dog.png"
+            "i": "images/image2/images3/hot_dog.png"
         },
         {
             "n": "Twins",
             "p": 17000,
-            "i": "images/image2/hot_dog.png"
+            "i": "images/image2/images3/twins.png"
         },
         {
             "n": "Big (45sm)",
             "p": 22000,
-            "i": "images/image2/hot_dog.png"
+            "i": "images/image2/images3/hotdogbig.png"
         },
         {
             "n": "Super (45sm)",
@@ -120,7 +120,7 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Big",
             "p": 45000,
-            "i": "images/image2/xaggi.png"
+            "i": "images/image2/images3/xaggi_big.png"
         },
         {
             "n": "Xot let",
@@ -168,7 +168,7 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Big",
             "p": 17000,
-            "i": "images/fri.png"
+            "i": "images/image2/images3/fribig.png"
         }
     ],
     "🥟 Somsa": [
@@ -180,17 +180,17 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Pishloqli tovuq",
             "p": 7000,
-            "i": "images/somsa.png"
+            "i": "images/image2/images3/chickensomsa.png"
         },
         {
             "n": "Ko'k",
             "p": 5000,
-            "i": "images/somsa.png"
+            "i": "images/image2/images3/koksomsa.png"
         },
         {
             "n": "Kartoshka",
             "p": 5000,
-            "i": "images/somsa.png"
+            "i": "images/image2/images3/kartoshkasomsa.png"
         }
     ],
     "☕️ Ichimliklar": [

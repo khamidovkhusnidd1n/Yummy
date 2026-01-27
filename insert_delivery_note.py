@@ -1,9 +1,13 @@
 from pathlib import Path
 path = Path('index.html')
-text = path.read_text(encoding='utf-8')
-old = "            if (promoResult.valid && discount > 0) {\n                confirmMsg += `? Chegirma: -${discount.toLocaleString()} so'm\n`;\n            }\n            confirmMsg += `\n?? Jami: ${finalTotal.toLocaleString()} so'm`;"
-new = "            if (promoResult.valid && discount > 0) {\n                confirmMsg += `? Chegirma: -${discount.toLocaleString()} so'm\n`;\n            }\n            if (deliveryMessage) {\n                confirmMsg += `?? ${deliveryMessage}\n`;\n            }\n            confirmMsg += `\n?? Jami: ${finalTotal.toLocaleString()} so'm`;"
-if old not in text:
-    raise SystemExit('promo block not found')
-path.write_text(text.replace(old, new, 1), encoding='utf-8')
-print('delivery note added to confirm')
+lines = path.read_text(encoding='utf-8').splitlines()
+for idx, line in enumerate(lines):
+    if '?? Jami' in line and 'confirmMsg +=' in line:
+        lines.insert(idx, '            if (deliveryMessage) {')
+        lines.insert(idx + 1, '                confirmMsg += `?? ${deliveryMessage}\n`;')
+        lines.insert(idx + 2, '            }')
+        break
+else:
+    raise SystemExit('confirm total line not found')
+path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+print('delivery message inserted near confirm total')

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Yummy - Premium Delivery</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="menu_data.js?v=1769508120.8934684"></script>
+    <script src="menu_data.js?v=1769524000"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -248,8 +248,6 @@
             </div>
             <div id="cart-items" class="flex-grow space-y-6 overflow-y-auto max-h-[40vh] pr-2"></div>
             <div class="mt-10 border-t border-gray-100 dark:border-zinc-800 pt-8">
-                <input type="text" id="promo-input" placeholder="Promo code"
-                    class="w-full h-14 bg-gray-50 dark:bg-zinc-900 rounded-3xl px-6 font-bold outline-none mb-6 uppercase">
                 <div id="cart-total" class="flex justify-between items-end mb-8"></div>
                 <button id="checkout-btn"
                     class="w-full h-18 py-5 price-tag rounded-[30px] font-black text-white text-lg shadow-2xl shadow-red-500/40 active:scale-95 transition-all flex items-center justify-center gap-3">
@@ -440,6 +438,10 @@
         document.getElementById('promo-input').placeholder = S.promo_placeholder;
 
         const MENU_DATA = {
+            "🔥 Specials": [
+                { "n": "Kfc BURGER (+0.25 Cola)", "p": 33000, "i": "images/image2/kfc_burger.png" },
+                { "n": "Kfc HAGGI (+0.25 Cola)", "p": 38000, "i": "images/image2/kfc_haggi_cola.png" }
+            ],
             "🌯 Lavash": [
                 { "n": "Standart", "p": 30000, "i": "images/lavash.png" },
                 { "n": "Pishloqli", "p": 35000, "i": "images/lavash.png" },
@@ -507,10 +509,7 @@
                 { "n": "Moxito", "p": 15000, "i": "images/image2/moxito.png" },
                 { "n": "O'rmon mevalari", "p": 15000, "i": "images/image2/forest_fruits.png" }
             ],
-            "🔥 Specials": [
-                { "n": "Kfc BURGER (+0.25 Cola)", "p": 33000, "i": "images/image2/kfc_burger.png" },
-                { "n": "Kfc HAGGI (+0.25 Cola)", "p": 38000, "i": "images/image2/kfc_haggi_cola.png" }
-            ],
+
             "🥫 Souslar": [
                 { "n": "Sous", "p": 4000, "i": "images/image2/sous.png" }
             ]
@@ -853,23 +852,12 @@
 
             const deliveryFee = total >= DELIVERY_THRESHOLD ? 0 : BASE_DELIVERY_FEE;
             const foodTotal = total;
-            const promoCode = document.getElementById('promo-input').value.trim().toUpperCase();
-            const promoResult = validatePromoCode(promoCode);
-            const discount = calculateDiscount(foodTotal, promoResult);
-            const finalTotal = foodTotal > 0 ? foodTotal + deliveryFee - discount : 0;
+            const finalTotal = foodTotal > 0 ? foodTotal + deliveryFee : 0;
             const deliveryMessage = total >= DELIVERY_THRESHOLD ? S.delivery_free : S.delivery_fee_note;
-
-            const deliveryMessage = total >= DELIVERY_THRESHOLD ? S.delivery_free : S.delivery_fee_note;
-
-            let discountHTML = '';
-            if (promoResult.valid && discount > 0) {
-                discountHTML = `<p class="text-[11px] text-emerald-500 font-bold uppercase mb-1">? Chegirma: -${discount.toLocaleString()} so'm</p>`;
-            }
 
             document.getElementById('cart-total').innerHTML = `<div class="text-right">
                 <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">${S.food_label}: ${foodTotal.toLocaleString()} so'm</p>
                 <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase mb-1">${S.deliv_label}: ${deliveryFee.toLocaleString()} so'm</p>
-                ${discountHTML}
                 <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500 mt-2">${finalTotal.toLocaleString()} so'm</p>
                 <p class="text-[10px] font-bold uppercase tracking-widest mt-2 ${total >= DELIVERY_THRESHOLD ? 'text-emerald-500' : 'text-amber-400'}">${deliveryMessage}</p>
             </div>`;
@@ -889,25 +877,13 @@
         document.getElementById('clear-cart').onclick = () => { cart = []; updateCartUI(); closeCart(); };
         document.getElementById('checkout-btn').onclick = () => {
             const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-            const promoCode = document.getElementById('promo-input').value.trim().toUpperCase();
-            const promoResult = validatePromoCode(promoCode);
-            const discount = calculateDiscount(total, promoResult);
             const deliveryFee = total >= DELIVERY_THRESHOLD ? 0 : BASE_DELIVERY_FEE;
-            const finalTotal = total > 0 ? total + deliveryFee - discount : 0;
+            const finalTotal = total > 0 ? total + deliveryFee : 0;
 
-            // Show promo validation dialog if code entered
-            if (promoCode && !promoResult.valid) {
-                alert('❌ Noto\'g\'ri promo kod!');
-                return;
-            }
-
-            // Show confirmation with promo details
+            // Show confirmation with delivery details
             let confirmMsg = `📋 Buyurtma tasdiqlash:\n\n`;
             confirmMsg += `🍔 Taomlar: ${total.toLocaleString()} so'm\n`;
             confirmMsg += `🚚 Yetkazish: ${deliveryFee.toLocaleString()} so'm\n`;
-            if (promoResult.valid && discount > 0) {
-                confirmMsg += `✅ Chegirma: -${discount.toLocaleString()} so'm\n`;
-            }
             confirmMsg += `\n💰 Jami: ${finalTotal.toLocaleString()} so'm`;
 
             if (!confirm(confirmMsg)) return;
@@ -916,8 +892,6 @@
                 type: 'order',
                 items: cart,
                 total: finalTotal,
-                promo_code: promoCode || null,
-                discount: discount,
                 delivery_fee: deliveryFee,
                 food_total: total
             };

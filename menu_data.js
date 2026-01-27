@@ -47,17 +47,17 @@ window.DYNAMIC_MENU_DATA = {
     ],
     "🥙 Doner": [
         {
-            "n": "Standart",
+            "n": "Standart Doner",
             "p": 25000,
             "i": "images/image2/donar.png"
         },
         {
-            "n": "Big",
+            "n": "Katta Doner",
             "p": 30000,
             "i": "images/image2/images3/donerbig.png"
         },
         {
-            "n": "Chiz",
+            "n": "Pishloqli Doner",
             "p": 35000,
             "i": "images/image2/images3/donercheese.png"
         }

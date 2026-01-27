@@ -38,8 +38,8 @@
         .product-card {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(0, 0, 0, 0.03);
-            flex-shrink: 0;
-            width: 200px;
+            width: 100%;
+            height: 100%;
         }
 
         .dark .product-card {
@@ -155,9 +155,9 @@
         <!-- JS renders this -->
     </div>
 
-    <!-- Menu Sections -->
-    <div id="menu-sections" class="mt-6 space-y-10 pb-12">
-        <!-- JS renders horizontal sliders here -->
+    <!-- Menu Sections (Vertical Flow) -->
+    <div id="menu-sections" class="mt-6 space-y-8 pb-12 w-full flex flex-col">
+        <!-- JS renders all categories and products vertically here -->
     </div>
 
 
@@ -492,7 +492,7 @@
         Object.keys(MENU_DATA).forEach(cat => {
             MENU_DATA[cat].forEach(item => {
                 const translatedName = (ITEM_NAMES[CURRENT_LANG] && ITEM_NAMES[CURRENT_LANG][item.n]) || item.n;
-                FLAT_ITEMS.push({ id: idCounter++, name: translatedName, price: item.p, image: item.i, cat: cat });
+                FLAT_ITEMS.push({ id: idCounter++, raw_name: item.n, name: translatedName, price: item.p, image: item.i, cat: cat });
             });
         });
 
@@ -546,10 +546,10 @@
 
 
         function renderProductCard(item) {
-            const name = item.n || item.name;
+            const baseName = item.raw_name || item.n || item.name;
+            const name = (ITEM_NAMES[CURRENT_LANG] && ITEM_NAMES[CURRENT_LANG][baseName]) || item.name || baseName;
             const price = item.p || item.price;
             const img = item.i || item.image;
-
             return `
                 <div class="product-card bg-white dark:bg-[#1a1a1a] rounded-[45px] p-3 shadow-xl shadow-black/5 flex flex-col justify-between w-full">
                     <div class="relative w-full aspect-square bg-gray-50 dark:bg-zinc-800 rounded-[38px] overflow-hidden">
@@ -739,5 +739,3 @@
 </body>
 
 </html>
-
-

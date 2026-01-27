@@ -18,11 +18,30 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="utils.js?v=1769524000"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <script>
+        // Early theme init to prevent white flash
+        (function() {
+            const THEME_STORAGE_KEY = 'yummy_theme';
+            try {
+                const saved = localStorage.getItem(THEME_STORAGE_KEY);
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { /* ignore */ }
+        })();
+    </script>
     <style>
         :root {
             --tg-theme-bg-color: #ffffff;
             --tg-theme-text-color: #000000;
             --accent: #dc2626;
+        }
+
+        html.dark,
+        .dark body {
+            background: #0c0c0c;
+            color: white;
         }
 
         body {
@@ -31,11 +50,6 @@
             background: #fcfcfc;
             overflow-x: hidden;
             scroll-behavior: smooth;
-        }
-
-        .dark body {
-            background: #0c0c0c;
-            color: white;
         }
 
         .category-active {
@@ -652,12 +666,21 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
+        const tg = window.Telegram?.WebApp ?? null;
+        const safeTelegramCall = (callback) => {
+            if (!tg || typeof callback !== 'function') return;
+            try {
+                callback(tg);
+            } catch (err) {
+                console.warn('Telegram API error:', err);
+            }
+        };
         const urlParams = new URLSearchParams(window.location.search);
         const STORAGE_KEY = 'yummy_lang';
         const DELIVERY_THRESHOLD = 50000;
         const BASE_DELIVERY_FEE = 15000;
         const SUPPORTED_LANGS = ['uz', 'ru', 'en'];
+        const safeGetById = (id) => document.getElementById(id);
         const queryLang = urlParams.get('lang');
         let persistedLang = null;
         try { persistedLang = localStorage.getItem(STORAGE_KEY); } catch (error) { persistedLang = null; }
@@ -859,19 +882,17 @@
             if (subtotal >= DELIVERY_THRESHOLD) return { fee: 0, isFree: true, reason: S.delivery_free };
             let fee = BASE_DELIVERY_FEE;
             if (distance && distance > 3) {
-                fee += (distance - 3) * 1000;
-            }
-            return { fee: Math.round(fee), isFree: false, reason: S.delivery_fee_note };
+        const _cb = document.getElementById('checkout-btn');
+        if (_cb) {
+            const _span = _cb.querySelector('span');
+            if (_span) _span.innerText = S.order_btn;
         }
+        const _pi = document.getElementById('promo-input');
+        if (_pi) _pi.placeholder = S.promo_placeholder;
 
-        const S = LANG_STRINGS[CURRENT_LANG] || LANG_STRINGS['uz'];
-
-        // Apply translations to static elements
-        document.getElementById('search-input').placeholder = S.search_placeholder;
-        document.getElementById('cart-title').innerText = S.cart_title;
-        document.getElementById('cart-sub').innerText = S.cart_sub;
-        document.getElementById('checkout-btn').querySelector('span').innerText = S.order_btn;
-        document.getElementById('promo-input').placeholder = S.promo_placeholder;
+        const searchResultsHeader = safeGetById('search-results-header');
+        const searchFilters = safeGetById('search-filters');
+        const searchResultCount = safeGetById('search-result-count');
 
         // MENU_DATA is loaded from menu_data.js
 
@@ -902,7 +923,6 @@
         }
 
         let cart = [];
-        let userData = { isFirstTime: true, totalOrders: 0 };
         let idCounter = 1;
         const FLAT_ITEMS = [];
         const CATEGORIES = Object.keys(MENU_DATA);
@@ -917,7 +937,8 @@
         });
 
         function renderCategories() {
-            const container = document.getElementById('categories-container');
+            const container = safeGetById('categories-container');
+            if (!container) return;
             container.innerHTML = Object.keys(MENU_DATA).map(cat => {
                 const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
                 return `
@@ -947,23 +968,24 @@
         }
 
         function renderMenu(searchTerm = "") {
-            const container = document.getElementById('menu-sections');
+            const container = safeGetById('menu-sections');
+            if (!container) return;
             if (searchTerm) {
                 paginationMode = false;
                 const filtered = FLAT_ITEMS.filter(i => translate(i.raw_name).toLowerCase().includes(searchTerm.toLowerCase()));
 
-                // Show search header
-                searchResultsHeader.classList.remove('hidden');
-                document.getElementById('search-result-count').textContent = `Found ${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
+                if (searchResultsHeader) searchResultsHeader.classList.remove('hidden');
+                if (searchResultCount) searchResultCount.textContent = `Found ${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
 
-                // Show category filters
                 const categories = [...new Set(filtered.map(i => i.cat))];
-                searchFilters.classList.remove('hidden');
-                searchFilters.innerHTML = categories.map(cat => `
-                    <button class="filter-chip" onclick="filterByCategory('${cat.replace(/'/g, "\\'")}', '${searchTerm.replace(/'/g, "\\'")}'">
-                        ${translate(cat, 'cat')}
-                    </button>
-                `).join('');
+                if (searchFilters) {
+                    searchFilters.classList.remove('hidden');
+                    searchFilters.innerHTML = categories.map(cat => `
+                        <button class="filter-chip" onclick="filterByCategory('${cat.replace(/'/g, "\\\\'")}', '${searchTerm.replace(/'/g, "\\\\'")}')">
+                            ${translate(cat, 'cat')}
+                        </button>
+                    `).join('');
+                }
 
                 container.innerHTML = `<div class="px-6 grid grid-cols-2 gap-4">${filtered.map(item => renderProductCard(item)).join('')}</div>`;
                 if (!filtered.length) container.innerHTML = `<div class="py-20 text-center text-gray-400 font-bold">${S.not_found}</div>`;
@@ -971,15 +993,13 @@
                 return;
             }
 
-            // Hide search header when showing full menu
-            searchResultsHeader.classList.add('hidden');
-            searchFilters.classList.add('hidden');
+            if (searchResultsHeader) searchResultsHeader.classList.add('hidden');
+            if (searchFilters) searchFilters.classList.add('hidden');
 
             paginationMode = true;
             currentCategoryIndex = 0;
             container.innerHTML = '';
 
-            // Load all categories at once
             for (let i = 0; i < CATEGORIES.length; i++) {
                 const cat = CATEGORIES[i];
                 const html = renderCategorySection(cat);
@@ -1001,9 +1021,10 @@
             const name = translate(rawName);
             const price = item.p || item.price;
             const img = item.i || item.image;
-
-            // Optimize image URL
-            const optimizedImg = imageOptimizer.getOptimizedUrl(img);
+            const optimizer = window.imageOptimizer;
+            const optimizedImg = (optimizer && typeof optimizer.getOptimizedUrl === 'function')
+                ? optimizer.getOptimizedUrl(img)
+                : img;
 
             return `
                 <div class="product-card bg-white dark:bg-[#1a1a1a] rounded-[45px] p-3 shadow-xl shadow-black/5 flex flex-col justify-between w-full h-full">
@@ -1028,7 +1049,10 @@
 
         function renderPromoCard(item) {
             const priceText = item.price ? item.price.toLocaleString() + " so'm" : '';
-            const optimizedImg = imageOptimizer.getOptimizedUrl(item.image);
+            const optimizer = window.imageOptimizer;
+            const optimizedImg = (optimizer && typeof optimizer.getOptimizedUrl === 'function')
+                ? optimizer.getOptimizedUrl(item.image)
+                : item.image;
 
             return `
                 <div class="promo-card" onclick="handlePromoClick('${item.id}')">
@@ -1061,7 +1085,7 @@
             const promo = PROMO_ITEMS.find(item => item.id === promoId);
             if (!promo) return;
             addToCartByName(promo.label, promo.price, promo.image);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg?.HapticFeedback) tg?.HapticFeedback.impactOccurred('light');
         };
 
         window.addToCartByName = (name, price, image) => {
@@ -1069,7 +1093,7 @@
             if (inCart) inCart.quantity += 1;
             else cart.push({ name, price, image, quantity: 1, id: Date.now() });
             updateCartUI();
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if (tg?.HapticFeedback) tg?.HapticFeedback.impactOccurred('medium');
         }
 
         let isScrollingByClick = false;
@@ -1083,7 +1107,7 @@
                 window.scrollTo({ top: y, behavior: "smooth" });
             }
             setTimeout(() => { isScrollingByClick = false; }, 800);
-            if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            if (tg?.HapticFeedback) tg?.HapticFeedback.selectionChanged();
         }
 
         function updateActiveCategoryUI(cat) {
@@ -1180,14 +1204,20 @@
             const count = cart.reduce((sum, i) => sum + i.quantity, 0);
             const countEl = document.getElementById('cart-count');
             if (count > 0) {
-                countEl.innerText = count;
-                countEl.classList.remove('hidden');
-                tg.MainButton.setText(`${S.confirm_btn} (${count})`);
-                tg.MainButton.show();
-                tg.MainButton.setParams({ color: '#dc2626', text_color: '#ffffff' });
+                if (countEl) { countEl.innerText = count; countEl.classList.remove('hidden'); }
+                // safe Telegram MainButton usage
+                if (tg && tg.MainButton && typeof tg.MainButton.setText === 'function') {
+                    try {
+                        tg.MainButton.setText(`${S.confirm_btn} (${count})`);
+                        if (typeof tg.MainButton.show === 'function') tg.MainButton.show();
+                        if (typeof tg.MainButton.setParams === 'function') tg.MainButton.setParams({ color: '#dc2626', text_color: '#ffffff' });
+                    } catch (e) { console.warn('tg.MainButton error', e); }
+                }
             } else {
-                countEl.classList.add('hidden');
-                tg.MainButton.hide();
+                if (countEl) countEl.classList.add('hidden');
+                if (tg && tg.MainButton && typeof tg.MainButton.hide === 'function') {
+                    try { tg.MainButton.hide(); } catch (e) { /* ignore */ }
+                }
             }
 
             const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
@@ -1326,7 +1356,7 @@
         }
 
         function addToWishlist(name, price, image) {
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            if (tg?.HapticFeedback) tg?.HapticFeedback.notificationOccurred('success');
             alert('Added to wishlist (Favorites coming soon!)');
         }
 
@@ -1350,7 +1380,7 @@
             renderCartItems();
             updateCartUI();
             if (cart.length === 0) closeCart();
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            if (tg?.HapticFeedback) tg?.HapticFeedback.impactOccurred('light');
         }
 
         function promptPromoCode() {
@@ -1395,7 +1425,8 @@
             };
 
             const send = () => {
-                document.getElementById('checkout-btn').disabled = true;
+                const checkoutBtn = document.getElementById('checkout-btn');
+                if (checkoutBtn) checkoutBtn.disabled = true;
                 setTimeout(() => {
                     // Update user data
                     userData.isFirstTime = false;
@@ -1407,8 +1438,13 @@
                     cart = [];
                     saveCartToStorage(cart);
 
-                    tg.sendData(JSON.stringify(payload));
-                    tg.close();
+                    // Safe Telegram send/close
+                    if (tg && typeof tg.sendData === 'function') {
+                        try { tg.sendData(JSON.stringify(payload)); } catch (e) { console.warn('tg.sendData error', e); }
+                    }
+                    if (tg && typeof tg.close === 'function') {
+                        try { tg.close(); } catch (e) { console.warn('tg.close error', e); }
+                    }
                 }, 500);
             };
 
@@ -1464,13 +1500,13 @@
             if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
                 htmlElement.classList.add('dark');
                 if (themeIcon) themeIcon.textContent = '☀️';
-                tg.setHeaderColor('#0f0f0f');
-                tg.setBackgroundColor('#0c0c0c');
+                if (tg && typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#0f0f0f');
+                if (tg && typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#0c0c0c');
             } else {
                 htmlElement.classList.remove('dark');
                 if (themeIcon) themeIcon.textContent = '🌙';
-                tg.setHeaderColor('#ffffff');
-                tg.setBackgroundColor('#fcfcfc');
+                if (tg && typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#ffffff');
+                if (tg && typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#fcfcfc');
             }
         }
 
@@ -1489,7 +1525,7 @@
                     tg.setBackgroundColor('#fcfcfc');
                 }
 
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                if (tg?.HapticFeedback) tg?.HapticFeedback.impactOccurred('light');
             });
         }
 
@@ -1498,8 +1534,12 @@
         cart = loadCartFromStorage();
         if (cart.length > 0) updateCartUI();
 
-        tg.expand();
-        tg.ready();
+        if (tg && typeof tg.expand === 'function') {
+            try { tg.expand(); } catch (e) { console.warn('tg.expand error', e); }
+        }
+        if (tg && typeof tg.ready === 'function') {
+            try { tg.ready(); } catch (e) { console.warn('tg.ready error', e); }
+        }
 
         renderCategories();
         renderPromoGrid();

@@ -447,7 +447,7 @@ async def admin_add_prod_image(message: types.Message, state: FSMContext):
         # Generate unique filename
         ext = file_path.split('.')[-1] if '.' in file_path else 'jpg'
         new_filename = f"product_{uuid.uuid4().hex[:8]}.{ext}"
-        save_path = f"frontend/images/products/{new_filename}"
+        save_path = f"images/products/{new_filename}"
         
         # Create directory if not exists
         os.makedirs(os.path.dirname(save_path), exist_ok=True)

@@ -1,4 +1,4 @@
-import sqlite3
+﻿import sqlite3
 from datetime import datetime
 
 class Database:
@@ -81,11 +81,12 @@ class Database:
         self.cursor.execute("INSERT INTO users (user_id, full_name, username, phone) VALUES (?, ?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET full_name=excluded.full_name, username=excluded.username, phone=excluded.phone", 
                             (user_id, full_name, username, phone))
         self.conn.commit()
-
     def set_user_lang(self, user_id, lang):
-        self.cursor.execute("UPDATE users SET lang = ? WHERE user_id = ?", (lang, user_id))
+        self.cursor.execute(
+            "INSERT INTO users (user_id, lang) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET lang=excluded.lang",
+            (user_id, lang)
+        )
         self.conn.commit()
-
     def get_user_lang(self, user_id):
         res = self.cursor.execute("SELECT lang FROM users WHERE user_id = ?", (user_id,)).fetchone()
         return res[0] if res else 'uz'
@@ -273,3 +274,4 @@ class Database:
 
 db = Database("yummy_bot.db")
 db._create_users_table()
+

@@ -418,7 +418,7 @@
                 const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
                 return `
                     <button id="nav-${safeId}" onclick="selectCategory('${cat}')" 
-                        class="category-item whitespace-nowrap px-8 py-3.5 rounded-3xl text-sm font-black tracking-tight transition-all snap-start ${activeCategory === cat ? 'category-active' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-500'}">
+                        class="category-btn whitespace-nowrap px-8 py-3.5 rounded-3xl text-sm font-black tracking-tight transition-all snap-start bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-500">
                         ${S.cats[cat] || cat}
                     </button>
                 `;
@@ -444,41 +444,45 @@
             container.innerHTML = Object.keys(MENU_DATA).map(cat => {
                 const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
                 return `
-                    <section id="section-${safeId}" class="space-y-4">
+                    <section id="section-${safeId}" class="menu-section space-y-4 pt-4" data-category="${cat}">
                         <div class="px-6 flex justify-between items-center">
                             <h2 class="text-xl font-black tracking-tighter">${S.cats[cat] || cat}</h2>
                         </div>
-                        <div class="flex gap-4 overflow-x-auto px-6 pb-4 no-scrollbar snap-x snap-mandatory">
-                            ${MENU_DATA[cat].map(item => renderProductCard(item, true)).join('')}
+                        <div class="px-6 grid grid-cols-2 gap-4">
+                            ${MENU_DATA[cat].map(item => renderProductCard(item)).join('')}
+
                         </div>
                     </section>
                 `;
             }).join('');
+            setTimeout(initScrollSpy, 100);
+
         }
 
-        function renderProductCard(item, isHorizontal = false) {
-            const snapClass = isHorizontal ? 'snap-start' : '';
-            const widthClass = isHorizontal ? '' : 'w-full';
-            const realId = item.id || FLAT_ITEMS.find(fi => fi.name === (item.n || item.name))?.id || Math.random();
+        function renderProductCard(item) {
+            const name = item.n || item.name;
+            const price = item.p || item.price;
+            const img = item.i || item.image;
 
             return `
-                <div class="product-card bg-white dark:bg-[#1a1a1a] rounded-[45px] p-3 shadow-xl shadow-black/5 flex flex-col justify-between ${snapClass} ${widthClass}">
+                <div class="product-card bg-white dark:bg-[#1a1a1a] rounded-[45px] p-3 shadow-xl shadow-black/5 flex flex-col justify-between w-full">
                     <div class="relative w-full aspect-square bg-gray-50 dark:bg-zinc-800 rounded-[38px] overflow-hidden">
-                        <img src="${item.i || item.image}" 
+                        <img src="${img}" 
                              onerror="this.onerror=null; this.src='images/burger.png';" 
                              class="w-full h-full object-cover image-zoom">
-                        <button onclick="addToCartByName('${item.n || item.name}', ${item.p || item.price}, '${item.i || item.image}')" 
+                        <button onclick="addToCartByName('${name}', ${price}, '${img}')" 
                                 class="absolute bottom-2 right-2 w-9 h-9 price-tag rounded-full shadow-md shadow-red-500/30 flex items-center justify-center text-white active:scale-90 transition-all hover:scale-110">
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
                         </button>
                     </div>
                     <div class="px-4 py-5">
-                        <h3 class="font-black text-sm tracking-tight text-gray-800 dark:text-zinc-100 line-clamp-1">${item.n || item.name}</h3>
-                        <p class="text-red-500 font-extrabold text-[15px] mt-1 tracking-tighter">${(item.p || item.price).toLocaleString()} so'm</p>
+                        <h3 class="font-black text-[12px] leading-tight tracking-tight text-gray-800 dark:text-zinc-100 line-clamp-2 h-8">${name}</h3>
+                        <p class="text-red-500 font-extrabold text-[15px] mt-1 tracking-tighter">${price.toLocaleString()} so'm</p>
                     </div>
                 </div>
             `;
         }
+
 
         window.addToCartByName = (name, price, image) => {
             const inCart = cart.find(i => i.name === name);
@@ -488,23 +492,59 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
+        let isScrollingByClick = false;
+
         window.selectCategory = (cat) => {
+            isScrollingByClick = true;
             activeCategory = cat;
-            renderCategories();
+            updateActiveCategoryUI(cat);
 
             const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
             const element = document.getElementById(`section-${safeId}`);
             if (element) {
-                const headerOffset = 130;
+                const headerOffset = 140;
                 const elementPosition = element.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                 window.scrollTo({ top: offsetPosition, behavior: "smooth" });
             }
 
-            const navBtn = document.getElementById(`nav-${safeId}`);
-            if (navBtn) navBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-
+            setTimeout(() => { isScrollingByClick = false; }, 800);
             if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        }
+
+        function updateActiveCategoryUI(cat) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('category-active');
+                btn.classList.add('bg-gray-100', 'dark:bg-zinc-800', 'text-gray-500', 'dark:text-zinc-500');
+            });
+            const safeId = cat.replace(/[^a-zA-Z0-9]/g, '');
+            const activeBtn = document.getElementById(`nav-${safeId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('category-active');
+                activeBtn.classList.remove('bg-gray-100', 'dark:bg-zinc-800', 'text-gray-500', 'dark:text-zinc-500');
+                activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function initScrollSpy() {
+            const sections = document.querySelectorAll('.menu-section');
+            const options = {
+                root: null,
+                rootMargin: '-150px 0px -70% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                if (isScrollingByClick) return;
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const cat = entry.target.getAttribute('data-category');
+                        updateActiveCategoryUI(cat);
+                    }
+                });
+            }, options);
+
+            sections.forEach(section => observer.observe(section));
         }
 
 

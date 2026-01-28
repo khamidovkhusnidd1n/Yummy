@@ -951,10 +951,14 @@
 
         // Language settings
         const CURRENT_LANG = new URLSearchParams(window.location.search).get('lang') || 'uz';
+
+        // Get category translations from menu_data.js
+        const CAT_TRANS = window.DYNAMIC_CATS || { uz: {}, ru: {}, en: {} };
+
         const LANG_STRINGS = {
-            uz: { cats: {}, search_placeholder: 'Qidirish...', cart_title: 'Savat', cart_sub: '', order_btn: 'Buyurtma berish', promo_placeholder: 'Promo kod', delivery_free: 'Yetkazib berish bepul', delivery_fee_note: 'Yetkazib berish' },
-            ru: { cats: {}, search_placeholder: 'Поиск...', cart_title: 'Корзина', cart_sub: '', order_btn: 'Заказать', promo_placeholder: 'Промокод', delivery_free: 'Доставка бесплатная', delivery_fee_note: 'Доставка' },
-            en: { cats: {}, search_placeholder: 'Search...', cart_title: 'Cart', cart_sub: '', order_btn: 'Order', promo_placeholder: 'Promo code', delivery_free: 'Free delivery', delivery_fee_note: 'Delivery' }
+            uz: { cats: CAT_TRANS.uz || {}, search_placeholder: 'Qidirish...', cart_title: 'Savat', cart_sub: '', order_btn: 'Buyurtma berish', promo_placeholder: 'Promo kod', delivery_free: 'Yetkazib berish bepul', delivery_fee_note: 'Yetkazib berish' },
+            ru: { cats: CAT_TRANS.ru || {}, search_placeholder: 'Поиск...', cart_title: 'Корзина', cart_sub: '', order_btn: 'Заказать', promo_placeholder: 'Промокод', delivery_free: 'Доставка бесплатная', delivery_fee_note: 'Доставка' },
+            en: { cats: CAT_TRANS.en || {}, search_placeholder: 'Search...', cart_title: 'Cart', cart_sub: '', order_btn: 'Order', promo_placeholder: 'Promo code', delivery_free: 'Free delivery', delivery_fee_note: 'Delivery' }
         };
         const S = LANG_STRINGS[CURRENT_LANG] || LANG_STRINGS['uz'];
         const BASE_DELIVERY_FEE = 5000;

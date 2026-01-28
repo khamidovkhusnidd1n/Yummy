@@ -828,12 +828,8 @@
     <div class="toast" id="toast">Savatga qo'shildi!</div>
 
     <script>
-        // ULTIMATE ROBUST SCRIPT
         const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.expand();
-            tg.ready();
-        }
+        if (tg) { tg.expand(); tg.ready(); }
 
         // 1. Data Definitions
         const DEFAULT_MENU = {
@@ -854,28 +850,23 @@
         window.PROMO_CODES = {};
 
         // 2. Utils
-        function setLanguage(lang) {
-            console.log("App language:", lang);
-        }
+        function setLanguage(lang) { console.log("Lang:", lang); }
 
-        function selectCat(cat) {
+        function selectCat(cat, idx) {
             activeCat = cat;
             renderCats();
-            // Safe selector for emojis
-            const safeId = "cat-" + btoa(unescape(encodeURIComponent(cat))).replace(/=/g, '');
-            const el = document.getElementById(safeId);
+            const el = document.getElementById('cat-section-' + idx);
             if (el) {
                 const headerOffset = 130;
-                const elementPosition = el.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
                 window.scrollTo({ top: offsetPosition, behavior: "smooth" });
             }
         }
 
-        function addToCart(name, price, img) {
-            const existing = cart.find(i => i.name === name);
+        function addToCart(n, p, i) {
+            const existing = cart.find(x => x.n === n);
             if (existing) { existing.qty++; }
-            else { cart.push({ name, price, img, qty: 1 }); }
+            else { cart.push({ n, p, i, qty: 1 }); }
             updateCartUI();
             showToast();
             if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -886,8 +877,8 @@
             const container = document.getElementById('catBar');
             if (!container) return;
             const keys = Object.keys(finalMenu);
-            container.innerHTML = keys.map(cat => `
-                <div class="category-item ${cat === activeCat ? 'active' : ''}" onclick="selectCat('${cat}')">
+            container.innerHTML = keys.map((cat, idx) => `
+                <div class="category-item ${cat === activeCat ? 'active' : ''}" onclick="selectCat('${cat.replace(/'/g, "\\'")}', ${idx})">
                     ${cat}
                 </div>
             `).join('');
@@ -898,28 +889,27 @@
             if (!container) return;
             const keys = Object.keys(finalMenu);
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:40px;">Yuklanmoqda...</div>';
+                container.innerHTML = '<div style="text-align:center; padding:40px;">Hozircha mahsulotlar yo\'q...</div>';
                 return;
             }
 
-            container.innerHTML = keys.map(cat => {
+            container.innerHTML = keys.map((cat, idx) => {
                 const items = finalMenu[cat] || [];
-                const safeId = "cat-" + btoa(unescape(encodeURIComponent(cat))).replace(/=/g, '');
                 return `
-                    <div class="category-block" id="${safeId}">
+                    <div class="category-block" id="cat-section-${idx}">
                         <div class="category-header"><span class="cat-name">${cat}</span></div>
                         <div class="products-grid">
                             ${items.map(item => `
                                 <div class="product-card">
                                     <div class="img-wrapper">
-                                        <img src="${item.i}" class="item-img" alt="${item.n}" onerror="this.src='images/burger.png'">
-                                        <button class="add-btn-fab" onclick="addToCart('${item.n.replace(/'/g, "\\'")}', ${item.p}, '${item.i}')">
+                                        <img src="${item.i || 'images/burger.png'}" class="item-img" onerror="this.src='images/burger.png'">
+                                        <button class="add-btn-fab" onclick="addToCart('${(item.n || "").replace(/'/g, "\\'")}', ${item.p || 0}, '${item.i || ""}')">
                                             <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3"/></svg>
                                         </button>
                                     </div>
                                     <div class="item-info">
-                                        <div class="item-name">${item.n}</div>
-                                        <div class="item-price">${item.p.toLocaleString()} so'm</div>
+                                        <div class="item-name">${item.n || "Noma'lum"}</div>
+                                        <div class="item-price">${(item.p || 0).toLocaleString()} so'm</div>
                                     </div>
                                 </div>
                             `).join('')}
@@ -931,7 +921,7 @@
 
         function updateCartUI() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
-            const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const total = cart.reduce((s, i) => s + (i.p * i.qty), 0);
 
             const badge = document.getElementById('cartBadge');
             if (badge) {
@@ -948,10 +938,10 @@
                 } else {
                     list.innerHTML = cart.map((item, idx) => `
                         <div class="cart-item">
-                            <img src="${item.i}" class="cart-item-img" onerror="this.src='images/burger.png'">
+                            <img src="${item.i || 'images/burger.png'}" class="cart-item-img" onerror="this.src='images/burger.png'">
                             <div class="cart-item-info">
                                 <div class="cart-item-name">${item.n}</div>
-                                <div class="cart-item-price">${item.p.toLocaleString()} so'm</div>
+                                <div class="cart-item-price">${(item.p || 0).toLocaleString()} so'm</div>
                             </div>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="updateQty(${idx}, -1)">-</button>
@@ -986,17 +976,17 @@
             if (!val) { results.innerHTML = ''; return; }
             const matches = [];
             Object.values(finalMenu).flat().forEach(item => {
-                if (item.n.toLowerCase().includes(val.toLowerCase())) matches.push(item);
+                if (item.n && item.n.toLowerCase().includes(val.toLowerCase())) matches.push(item);
             });
             results.innerHTML = `<div class="products-grid">${matches.map(item => `
                 <div class="product-card">
                     <div class="img-wrapper">
-                        <img src="${item.i}" class="item-img" onerror="this.src='images/burger.png'">
-                        <button class="add-btn-fab" onclick="addToCart('${item.n.replace(/'/g, "\\'")}', ${item.p}, '${item.i}')">
+                        <img src="${item.i || 'images/burger.png'}" class="item-img" onerror="this.src='images/burger.png'">
+                        <button class="add-btn-fab" onclick="addToCart('${(item.n || "").replace(/'/g, "\\'")}', ${item.p || 0}, '${item.i || ""}')">
                             <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                         </button>
                     </div>
-                    <div class="item-info"><div class="item-name">${item.n}</div><div class="item-price">${item.p.toLocaleString()} so'm</div></div>
+                    <div class="item-info"><div class="item-name">${item.n || ""}</div><div class="item-price">${(item.p || 0).toLocaleString()} so'm</div></div>
                 </div>`).join('')}</div>`;
         }
 
@@ -1034,7 +1024,7 @@
             if (!addrVal) { alert('Iltimos, yetkazib berish manzilini kiriting!'); return; }
             const payload = {
                 type: 'order',
-                items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.qty })),
+                items: cart.map(i => ({ name: i.n, price: i.p, quantity: i.qty })),
                 promo_code: validatedPromo ? validatedPromo.code : '',
                 address: addrVal,
                 lang: new URLSearchParams(window.location.search).get('lang') || 'uz'
@@ -1047,23 +1037,18 @@
 
         // 4. Initialization
         function bootstrap() {
-            console.log("Bootstraping app...");
+            console.log("Bootstraping...");
             const urlParams = new URLSearchParams(window.location.search);
             const lang = urlParams.get('lang') || 'uz';
-            const promoBase64 = urlParams.get('p');
+            const p64 = urlParams.get('p');
+            if (p64) { try { window.PROMO_CODES = JSON.parse(atob(p64.replace(/-/g, '+').replace(/_/g, '/'))); } catch (e) { console.error("Promo error:", e); } }
 
-            if (promoBase64) {
-                try {
-                    const decoded = atob(promoBase64.replace(/-/g, '+').replace(/_/g, '/'));
-                    window.PROMO_CODES = JSON.parse(decoded);
-                } catch (e) { console.error("Promo error:", e); }
-            }
-
-            // Sync Data
             if (window.DYNAMIC_MENU_DATA && Object.keys(window.DYNAMIC_MENU_DATA).length > 0) {
                 finalMenu = window.DYNAMIC_MENU_DATA;
+                console.log("Using DYNAMIC_MENU_DATA:", finalMenu);
             } else {
                 finalMenu = DEFAULT_MENU;
+                console.log("Using DEFAULT_MENU:", finalMenu);
             }
 
             activeCat = Object.keys(finalMenu)[0] || "";
@@ -1073,25 +1058,19 @@
             updateCartUI();
         }
 
-        // Run immediately as script is at end of body
-        bootstrap();
+        window.onload = bootstrap;
 
         // Auto Scroll Update
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('.category-block');
             let current = '';
             sections.forEach(s => {
-                const top = s.offsetTop - 200;
-                if (window.pageYOffset >= top) {
-                    // Reverse the safe ID back or find by header (simpler)
+                if (window.pageYOffset >= s.offsetTop - 200) {
                     const header = s.querySelector('.cat-name');
                     if (header) current = header.innerText;
                 }
             });
-            if (current && activeCat !== current) {
-                activeCat = current;
-                renderCats();
-            }
+            if (current && activeCat !== current) { activeCat = current; renderCats(); }
         });
     </script>
 </body>

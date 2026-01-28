@@ -3,24 +3,62 @@ import asyncio
 import logging
 import sys
 import os
+import json
 from aiogram import Bot, Dispatcher
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp import web
 from config import BOT_TOKEN
 from handlers import user_handlers, admin_handlers
+from database import db
 
 # Webhook configuration
 WEBHOOK_HOST = os.getenv("RENDER_EXTERNAL_URL") # Provided by Render automatically
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
-WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
+WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}" if WEBHOOK_HOST else None
 
 # Server configuration
 WEB_SERVER_HOST = "0.0.0.0"
 WEB_SERVER_PORT = int(os.getenv("PORT", 8080))
 
 async def on_startup(bot: Bot) -> None:
-    await bot.set_webhook(WEBHOOK_URL)
-    print(f"Webhook set to: {WEBHOOK_URL}")
+    if WEBHOOK_URL:
+        await bot.set_webhook(WEBHOOK_URL)
+        print(f"Webhook set to: {WEBHOOK_URL}")
+
+# --- WEB HANDLERS ---
+async def web_index(request):
+    """Serve the main index.html file"""
+    return web.FileResponse('./index.html')
+
+async def api_get_menu(request):
+    """API endpoint to get dynamic menu data from database"""
+    # Get all categories
+    categories = db.get_all_categories()
+    
+    # Structure for the frontend: { "CategoryName": [ {item}, {item} ] }
+    menu_data = {}
+    
+    # Categories table: id, name_uz, name_ru, name_en
+    for cat in categories:
+        cat_id = cat[0]
+        cat_name = cat[1] # Using name_uz as the primary key for the menu dict
+        
+        items = db.get_products_by_category(cat_id)
+        # Products table: id, category_id, name, price, image, is_available
+        category_items = []
+        for item in items:
+            if item[5]: # is_available (index 5)
+                category_items.append({
+                    "id": item[0],
+                    "n": item[2],       # name
+                    "p": item[3],       # price
+                    "i": item[4]        # image
+                })
+        
+        if category_items:
+            menu_data[cat_name] = category_items
+            
+    return web.json_response(menu_data)
 
 def main():
     if not BOT_TOKEN:
@@ -35,41 +73,68 @@ def main():
 
     # Initialize admins from config
     from config import SUPER_ADMINS, WORKERS
-    from database import db
     for admin_id in SUPER_ADMINS:
         if not db.get_admin(admin_id):
             db.add_admin(admin_id, role='super_admin', permissions='manage_admins,menu,orders,promos,mailing,stats')
     for worker_id in WORKERS:
         if not db.get_admin(worker_id):
             db.add_admin(worker_id, role='admin', permissions='orders')
+            
+    # Always set up the web app (for both webhook and web interface)
+    app = web.Application()
+    
+    # 1. Setup Request Handler for Bot Webhooks
+    webhook_requests_handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot,
+    )
+    webhook_requests_handler.register(app, path=WEBHOOK_PATH)
+    
+    setup_application(app, dp, bot=bot)
 
-    # If RENDER_EXTERNAL_URL is set, use webhooks
-    if WEBHOOK_HOST:
+    # 2. Setup Web App Routes
+    app.router.add_get('/', web_index)
+    app.router.add_get('/api/menu', api_get_menu)
+    
+    # 3. Setup Static Files
+    # Serves the current directory for files like menu_data.js, utils.js
+    # Be careful not to expose sensitive files (like .env) in production if root is served.
+    # Ideally, put static assets in a 'static' folder. For now, we serve specific files or filtered root.
+    app.router.add_static('/images', path='./images', name='images')
+    app.router.add_static('/', path='./', name='static') # Serve root for js files
+
+    # Register startup hooks
+    if WEBHOOK_URL:
         dp.startup.register(on_startup)
-        async def on_startup_scheduler(bot: Bot):
-            asyncio.create_task(daily_report_scheduler(bot))
-        dp.startup.register(on_startup_scheduler)
+    
+    # Always run the scheduler
+    async def on_startup_scheduler(bot: Bot):
+        asyncio.create_task(daily_report_scheduler(bot))
+    dp.startup.register(on_startup_scheduler)
 
-        app = web.Application()
-        webhook_requests_handler = SimpleRequestHandler(
-            dispatcher=dp,
-            bot=bot,
-        )
-        webhook_requests_handler.register(app, path=WEBHOOK_PATH)
-        setup_application(app, dp, bot=bot)
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    print(f"Starting server on port {WEB_SERVER_PORT}...")
+    
+    # If running locally without a webhook URL, we can still run the web server
+    # but might want polling for the bot.
+    if not WEBHOOK_URL:
+        print("No WEBHOOK_URL found. Bot will run in POLLING mode, but Web App is also available.")
         
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-        print(f"Starting server on port {WEB_SERVER_PORT}...")
-        web.run_app(app, host=WEB_SERVER_HOST, port=WEB_SERVER_PORT)
-    else:
-        # Otherwise use local polling
-        async def run_polling():
-            logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-            print("Starting polling mode (Local)...")
-            asyncio.create_task(daily_report_scheduler(bot))
-            await dp.start_polling(bot)
+        # We need to run polling in a separate task or just run app and use polling 
+        # But aiohttp web.run_app is blocking.
+        # Common pattern: use web.run_app and run polling in background OR
+        # if dev mode, just run polling? 
+        # Since user wants the Web App to work, we MUST run the web server.
         
-        asyncio.run(run_polling())
+        # For local dev with polling AND web server:
+        async def run_polling_worker(app):
+            await bot.delete_webhook(drop_pending_updates=True)
+            asyncio.create_task(dp.start_polling(bot))
+            yield
+            
+        app.cleanup_ctx.append(run_polling_worker)
+        
+    web.run_app(app, host=WEB_SERVER_HOST, port=WEB_SERVER_PORT)
 
 async def daily_report_scheduler(bot: Bot):
     from config import SUPER_ADMINS

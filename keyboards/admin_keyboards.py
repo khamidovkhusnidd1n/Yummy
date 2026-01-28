@@ -38,7 +38,9 @@ def admin_reply_menu(is_super=False):
     kb.append([KeyboardButton(text="🏠 Foydalanuvchi menyusi")])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
+def menu_manage_kb():
     kb = [
+        [InlineKeyboardButton(text="🔄 JS -> DB Sync", callback_data="admin_sync_js")],
         [InlineKeyboardButton(text="➕ Yangi taom qo'shish", callback_data="admin_add_prod")],
         [InlineKeyboardButton(text="✏️ Narxlarni tahrirlash", callback_data="admin_edit_price")],
         [InlineKeyboardButton(text="🗑 Taomni o'chirish", callback_data="admin_del_prod")],

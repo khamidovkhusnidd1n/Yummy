@@ -198,8 +198,27 @@ async def show_analytics_callback(event: types.CallbackQuery | types.Message):
 async def admin_menu_manage_callback(callback: types.CallbackQuery):
     if not db.has_permission(callback.from_user.id, 'menu'):
         return await callback.answer("Sizda menuni boshqarish huquqi yo'q.", show_alert=True)
-    await callback.message.edit_text("🍴 **Menu Boshqaruvi**\n\nBu yerdan taomlar qo'shishingiz, narxlarni o'zgartirishingiz yoki taomlarni o'chirishingiz mumkin.", reply_markup=menu_manage_kb())
-    await callback.message.answer("Menu boshqaruvi tugmalari pastga qo'shildi.", reply_markup=menu_manage_reply_kb())
+    
+    text = "🍴 **Menu Boshqaruvi**\n\n"
+    text += "Bu yerdan taomlarni boshqarishingiz mumkin.\n"
+    text += "💡 Agar kategoriyalar ko'rinmasa, **🔄 JS -> DB Sync** tugmasini bosing."
+    
+    await callback.message.edit_text(text, reply_markup=akb.menu_manage_kb(), parse_mode="Markdown")
+    await callback.message.answer("Menu boshqaruvi tugmalari pastga qo'shildi.", reply_markup=akb.menu_manage_reply_kb())
+    await callback.answer()
+
+@router.callback_query(F.data == "admin_sync_js")
+async def admin_sync_js_callback(callback: types.CallbackQuery):
+    if not db.has_permission(callback.from_user.id, 'menu'):
+        return await callback.answer("Ruxsat yo'q.", show_alert=True)
+    
+    await callback.message.answer("🔄 Sinxronizatsiya boshlandi...")
+    try:
+        from utils.sync_from_js import import_menu_from_js
+        import_menu_from_js()
+        await callback.message.answer("✅ Menu muvaffaqiyatli sinxronizatsiya qilindi! Endi kategoriyalar chiqishi kerak.")
+    except Exception as e:
+        await callback.message.answer(f"❌ Xatolik yuz berdi: {e}")
     await callback.answer()
 
 @router.callback_query(F.data == "admin_promo_manage")

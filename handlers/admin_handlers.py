@@ -135,17 +135,8 @@ async def admin_orders_callback(callback: types.CallbackQuery):
 
 @router.callback_query(F.data == "admin_admins", F.from_user.id.in_(SUPER_ADMINS))
 async def admin_admins_callback(callback: types.CallbackQuery):
-    total_admins = len(set(ALL_ADMINS))
-    super_count = len(set(SUPER_ADMINS))
-    worker_count = len(set(WORKERS))
-
-    text = "*Adminlar*\n\n"
-    text += f"Jami: {total_admins}\n"
-    text += f"Super adminlar: {super_count}\n"
-    text += f"Workerlar: {worker_count}\n\n"
-    text += "Adminlarni o'zgartirish uchun .env faylida SUPER_ADMINS va WORKERS ni yangilang."
-
-    await callback.message.answer(text, parse_mode="Markdown")
+    # Open admin management menu instead of just showing info
+    await callback.message.edit_text("👥 **Adminlar Boshqaruvi**", reply_markup=akb.admin_management_kb(), parse_mode="Markdown")
     await callback.answer()
 
 

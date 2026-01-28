@@ -978,24 +978,7 @@
             Object.values(finalMenu).flat().forEach(item => {
                 if (item.n && item.n.toLowerCase().includes(val.toLowerCase())) matches.push(item);
             });
-            results.innerHTML = `<div class="products-grid">${matches.map(item => `
-                <div class="product-card">
-                    <div class="img-wrapper">
-                        <img src="${item.i || 'images/burger.png'}" class="item-img" onerror="this.src='images/burger.png'">
-                        <button class="add-btn-fab" onclick="addToCart('${(item.n || "").replace(/'/g, "\\'")}', ${item.p || 0}, '${item.i || ""}')">
-                            <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                        </button>
-                    </div>
-                    <div class="item-info"><div class="item-name">${item.n || ""}</div><div class="item-price">${(item.p || 0).toLocaleString()} so'm</div></div>
-                </div>`).join('')}</div>`;
-        }
-
-        function handlePromoKeyup(event) {
-            const messageEl = document.getElementById('promoMessage');
-            if (messageEl) {
-                messageEl.textContent = '';
-                messageEl.className = '';
-            }
+Select-String -Path "handlers\user_handlers.py" -Pattern "promo_req"
             if (event.key === 'Enter') checkPromo();
         }
 

@@ -154,34 +154,44 @@ async def process_confirm(message: types.Message, state: FSMContext):
         user_name = message.from_user.full_name
         user_username = f"@{message.from_user.username}" if message.from_user.username else "Noma'lum"
         
+        # Determine location string
+        final_location = data.get('location') or "Manzil kiritilmagan"
+        
         order_id = db.create_order(
             user_id=user_id,
             items=data['items_str'],
             total_price=data['total_price'],
-            promo_code=data.get('promo_code'),
+            promo_code=data.get('promo_code_from_app'),
             discount_amount=data.get('discount_amount', 0),
             method=data.get('method'),
-            location=data.get('location')
+            location=final_location
         )
-        db.add_user(user_id, user_name, user_username, data['phone'])
+        db.add_user(user_id, user_name, user_username, data.get('phone', 'N/A'))
 
+        # Notify User & Return to Main Menu immediately
         is_admin = (user_id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(user_id))
-        await message.answer(s['order_received'].format(id=order_id), reply_markup=kb.main_menu(lang, is_admin))
+        
+        # Clear state FIRST
+        await state.clear()
+        
+        await message.answer(
+            s['order_received'].format(id=order_id), 
+            reply_markup=kb.main_menu(lang, is_admin)
+        )
         
         # Notify Admin (Worker)
         admin_msg = f"🆕 Yangi buyurtma #{order_id}!\n\n"
         admin_msg += f"👤 Mijoz: {user_name}\n"
         admin_msg += f"🆔 Nickname: [{user_username}](tg://user?id={user_id})\n"
-        admin_msg += f"📞 Tel: {data['phone']}\n"
+        admin_msg += f"📞 Tel: {data.get('phone', 'N/A')}\n"
         
-        if 'promo_code' in data:
-            admin_msg += f"🎟 Promo: {data['promo_code']} (-{data['discount_percent']}%)\n"
+        if data.get('promo_code_from_app'):
+            admin_msg += f"🎟 Promo: {data['promo_code_from_app']}\n"
 
         method_str = "🛵 Kuryer orqali" if data.get('method') == 'delivery' else "🏃 O'zi boradi (Self-pickup)"
         admin_msg += f"🛒 Usul: {method_str}\n"
         
-        loc_val = data.get('maps_url') or "Mavjud emas (O'zi boradi)"
-        admin_msg += f"📍 Manzil: {loc_val}\n\n"
+        admin_msg += f"📍 Manzil: {final_location}\n\n"
         admin_msg += f"🧾 Taomlar:\n{data['items_str']}\n\n"
         admin_msg += f"💰 Jami: {data['total_price']:,} so'm"
 
@@ -193,10 +203,6 @@ async def process_confirm(message: types.Message, state: FSMContext):
                 pass
 
         db.clear_cart(user_id)
-        await state.clear()
-        
-        # Show order confirmation with Main Menu button
-        await message.answer("✅ Asosiy menyuga qaytish:", reply_markup=kb.main_menu(lang, is_admin))
         
     elif message.text == s['cancel_btn']:
         await state.clear()

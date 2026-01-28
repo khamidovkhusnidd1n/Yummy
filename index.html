@@ -854,8 +854,26 @@
 
         let cart = [];
         let activeCat = Object.keys(finalMenu)[0];
+        let validatedPromo = null;
+        window.PROMO_CODES = {}; // Source of truth from backend
 
         function initApp() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || 'uz';
+            const promoBase64 = urlParams.get('p');
+
+            // Sync promo codes from URL parameter (sent by backend)
+            if (promoBase64) {
+                try {
+                    const decoded = atob(promoBase64.replace(/-/g, '+').replace(/_/g, '/'));
+                    window.PROMO_CODES = JSON.parse(decoded);
+                    console.log("Promo codes synchronized from DB:", window.PROMO_CODES);
+                } catch (e) {
+                    console.error("Promo sync error:", e);
+                }
+            }
+
+            setLanguage(lang);
             renderCats();
             renderProducts();
             updateCartUI();
@@ -1018,35 +1036,12 @@
             `;
         }
 
-        let validatedPromo = null;
-        window.PROMO_CODES = {}; // Source of truth from backend
-
-        function initApp() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const lang = urlParams.get('lang') || 'uz';
-            const promoBase64 = urlParams.get('p');
-
-            // Sync promo codes from URL parameter (sent by backend)
-            if (promoBase64) {
-                try {
-                    // Use a more robust base64 decoding (handle padding and URL safe charts if needed)
-                    const decoded = atob(promoBase64.replace(/-/g, '+').replace(/_/g, '/'));
-                    window.PROMO_CODES = JSON.parse(decoded);
-                    console.log("Promo codes synchronized from DB:", window.PROMO_CODES);
-                } catch (e) {
-                    console.error("Promo sync error:", e);
-                }
-            }
-
-            setLanguage(lang);
-            renderMenu();
-            updateCartUI();
-        }
-
         function handlePromoKeyup(event) {
             const messageEl = document.getElementById('promoMessage');
-            messageEl.textContent = '';
-            messageEl.className = '';
+            if (messageEl) {
+                messageEl.textContent = '';
+                messageEl.className = '';
+            }
 
             if (event.key === 'Enter') {
                 checkPromo();

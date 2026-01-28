@@ -828,21 +828,22 @@
     <div class="toast" id="toast">Savatga qo'shildi!</div>
 
     <script>
+        // ULTIMATE ROBUST SCRIPT
         const tg = window.Telegram?.WebApp;
-        if (tg) { tg.expand(); tg.ready(); }
+        if (tg) {
+            tg.expand();
+            tg.ready();
+        }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const LANG = urlParams.get('lang') || 'uz';
-
-        // Fallback data if everything fails
+        // 1. Data Definitions
         const DEFAULT_MENU = {
             "🌯 Lavash": [
-                { n: "Standart", p: 30000, i: "images/lavash.png" },
-                { n: "Pishloqli", p: 35000, i: "images/image2/images3/lavash_cheese.png" }
+                { "n": "Standart", "p": 30000, "i": "images/lavash.png" },
+                { "n": "Pishloqli", "p": 35000, "i": "images/image2/images3/lavash_cheese.png" }
             ],
             "🍔 Burger": [
-                { n: "Gamburger", p: 28000, i: "images/burger.png" },
-                { n: "Chizburger", p: 33000, i: "images/image2/images3/cheeseburger.png" }
+                { "n": "Gamburger", "p": 28000, "i": "images/burger.png" },
+                { "n": "Chizburger", "p": 33000, "i": "images/image2/images3/cheeseburger.png" }
             ]
         };
 
@@ -852,103 +853,17 @@
         let validatedPromo = null;
         window.PROMO_CODES = {};
 
+        // 2. Utils
         function setLanguage(lang) {
-            console.log("Language set to:", lang);
-        }
-
-        function initApp() {
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const lang = urlParams.get('lang') || 'uz';
-                const promoBase64 = urlParams.get('p');
-
-                if (promoBase64) {
-                    try {
-                        const decoded = atob(promoBase64.replace(/-/g, '+').replace(/_/g, '/'));
-                        window.PROMO_CODES = JSON.parse(decoded);
-                    } catch (e) {
-                        console.error("Promo sync error:", e);
-                    }
-                }
-
-                // Check sources
-                if (window.DYNAMIC_MENU_DATA && Object.keys(window.DYNAMIC_MENU_DATA).length > 0) {
-                    finalMenu = window.DYNAMIC_MENU_DATA;
-                } else {
-                    finalMenu = DEFAULT_MENU;
-                }
-
-                activeCat = Object.keys(finalMenu)[0] || "";
-                setLanguage(lang);
-                renderCats();
-                renderProducts();
-                updateCartUI();
-            } catch (err) {
-                console.error("Init error:", err);
-            }
-        }
-
-        function renderCats() {
-            const container = document.getElementById('catBar');
-            if (!container || !finalMenu) return;
-            try {
-                const keys = Object.keys(finalMenu);
-                if (keys.length === 0) return;
-
-                container.innerHTML = keys.map(cat => `
-                    <div class="category-item ${cat === activeCat ? 'active' : ''}" onclick="selectCat('${cat}')">
-                        ${cat}
-                    </div>
-                `).join('');
-            } catch (e) { console.error("RenderCats error:", e); }
-        }
-
-        function renderProducts() {
-            const container = document.getElementById('menuContainer');
-            if (!container || !finalMenu) return;
-            try {
-                const keys = Object.keys(finalMenu);
-                if (keys.length === 0) {
-                    container.innerHTML = '<div style="text-align:center; padding:50px; color:#999;">Menu yuklanmoqda...</div>';
-                    return;
-                }
-
-                container.innerHTML = keys.map(cat => {
-                    const items = finalMenu[cat] || [];
-                    return `
-                        <div class="category-block" id="cat-${cat.replace(/\s/g, '-')}">
-                            <div class="category-header">
-                                <span class="cat-name">${cat}</span>
-                            </div>
-                            <div class="products-grid">
-                                ${items.map(item => `
-                                    <div class="product-card">
-                                        <div class="img-wrapper">
-                                            <img src="${item.i}" class="item-img" alt="${item.n}" onerror="this.src='images/burger.png'">
-                                            <button class="add-btn-fab" onclick="addToCart('${item.n}', ${item.p}, '${item.i}')">
-                                                <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3"/></svg>
-                                            </button>
-                                        </div>
-                                        <div class="item-info">
-                                            <div class="item-name">${item.n}</div>
-                                            <div class="item-price">${item.p.toLocaleString()} so'm</div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } catch (e) {
-                console.error("RenderProducts error:", e);
-                container.innerHTML = '<div style="color:red; padding:20px;">Xatolik yuz berdi. Iltimos qayta yuklang.</div>';
-            }
+            console.log("App language:", lang);
         }
 
         function selectCat(cat) {
             activeCat = cat;
             renderCats();
-            const el = document.getElementById(`cat-${cat.replace(/\s/g, '-')}`);
+            // Safe selector for emojis
+            const safeId = "cat-" + btoa(unescape(encodeURIComponent(cat))).replace(/=/g, '');
+            const el = document.getElementById(safeId);
             if (el) {
                 const headerOffset = 130;
                 const elementPosition = el.getBoundingClientRect().top;
@@ -959,14 +874,59 @@
 
         function addToCart(name, price, img) {
             const existing = cart.find(i => i.name === name);
-            if (existing) {
-                existing.qty++;
-            } else {
-                cart.push({ name, price, img, qty: 1 });
-            }
+            if (existing) { existing.qty++; }
+            else { cart.push({ name, price, img, qty: 1 }); }
             updateCartUI();
             showToast();
             if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        // 3. Rendering
+        function renderCats() {
+            const container = document.getElementById('catBar');
+            if (!container) return;
+            const keys = Object.keys(finalMenu);
+            container.innerHTML = keys.map(cat => `
+                <div class="category-item ${cat === activeCat ? 'active' : ''}" onclick="selectCat('${cat}')">
+                    ${cat}
+                </div>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('menuContainer');
+            if (!container) return;
+            const keys = Object.keys(finalMenu);
+            if (keys.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px;">Yuklanmoqda...</div>';
+                return;
+            }
+
+            container.innerHTML = keys.map(cat => {
+                const items = finalMenu[cat] || [];
+                const safeId = "cat-" + btoa(unescape(encodeURIComponent(cat))).replace(/=/g, '');
+                return `
+                    <div class="category-block" id="${safeId}">
+                        <div class="category-header"><span class="cat-name">${cat}</span></div>
+                        <div class="products-grid">
+                            ${items.map(item => `
+                                <div class="product-card">
+                                    <div class="img-wrapper">
+                                        <img src="${item.i}" class="item-img" alt="${item.n}" onerror="this.src='images/burger.png'">
+                                        <button class="add-btn-fab" onclick="addToCart('${item.n.replace(/'/g, "\\'")}', ${item.p}, '${item.i}')">
+                                            <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3"/></svg>
+                                        </button>
+                                    </div>
+                                    <div class="item-info">
+                                        <div class="item-name">${item.n}</div>
+                                        <div class="item-price">${item.p.toLocaleString()} so'm</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function updateCartUI() {
@@ -978,7 +938,6 @@
                 badge.innerText = count;
                 badge.classList.toggle('visible', count > 0);
             }
-
             const totalValEl = document.getElementById('totalVal');
             if (totalValEl) totalValEl.innerText = total.toLocaleString() + " so'm";
 
@@ -989,10 +948,10 @@
                 } else {
                     list.innerHTML = cart.map((item, idx) => `
                         <div class="cart-item">
-                            <img src="${item.img}" class="cart-item-img" onerror="this.src='images/burger.png'">
+                            <img src="${item.i}" class="cart-item-img" onerror="this.src='images/burger.png'">
                             <div class="cart-item-info">
-                                <div class="cart-item-name">${item.name}</div>
-                                <div class="cart-item-price">${item.price.toLocaleString()} so'm</div>
+                                <div class="cart-item-name">${item.n}</div>
+                                <div class="cart-item-price">${item.p.toLocaleString()} so'm</div>
                             </div>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="updateQty(${idx}, -1)">-</button>
@@ -1011,57 +970,34 @@
             updateCartUI();
         }
 
-        function clearCart() {
-            cart = [];
-            updateCartUI();
-        }
-
+        function clearCart() { cart = []; updateCartUI(); }
         function openCart() { document.getElementById('cartModal').classList.add('open'); }
         function closeCart() { document.getElementById('cartModal').classList.remove('open'); }
-
-        function openSearch() {
-            document.getElementById('searchModal').classList.add('open');
-            const input = document.getElementById('searchInput');
-            if (input) input.focus();
-        }
+        function openSearch() { document.getElementById('searchModal').classList.add('open'); document.getElementById('searchInput')?.focus(); }
         function closeSearch() { document.getElementById('searchModal').classList.remove('open'); }
-
         function showToast() {
             const t = document.getElementById('toast');
-            if (t) {
-                t.classList.add('show');
-                setTimeout(() => t.classList.remove('show'), 2000);
-            }
+            if (t) { t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
         }
 
         function handleSearch(val) {
             const results = document.getElementById('searchResults');
             if (!results) return;
             if (!val) { results.innerHTML = ''; return; }
-
             const matches = [];
             Object.values(finalMenu).flat().forEach(item => {
                 if (item.n.toLowerCase().includes(val.toLowerCase())) matches.push(item);
             });
-
-            results.innerHTML = `
-                <div class="products-grid">
-                    ${matches.map(item => `
-                        <div class="product-card">
-                            <div class="img-wrapper">
-                                <img src="${item.i}" class="item-img" onerror="this.src='images/burger.png'">
-                                <button class="add-btn-fab" onclick="addToCart('${item.n}', ${item.p}, '${item.i}')">
-                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-                                </button>
-                            </div>
-                            <div class="item-info">
-                                <div class="item-name">${item.n}</div>
-                                <div class="item-price">${item.p.toLocaleString()} so'm</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
+            results.innerHTML = `<div class="products-grid">${matches.map(item => `
+                <div class="product-card">
+                    <div class="img-wrapper">
+                        <img src="${item.i}" class="item-img" onerror="this.src='images/burger.png'">
+                        <button class="add-btn-fab" onclick="addToCart('${item.n.replace(/'/g, "\\'")}', ${item.p}, '${item.i}')">
+                            <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                        </button>
+                    </div>
+                    <div class="item-info"><div class="item-name">${item.n}</div><div class="item-price">${item.p.toLocaleString()} so'm</div></div>
+                </div>`).join('')}</div>`;
         }
 
         function handlePromoKeyup(event) {
@@ -1070,33 +1006,19 @@
                 messageEl.textContent = '';
                 messageEl.className = '';
             }
-
-            if (event.key === 'Enter') {
-                checkPromo();
-            }
+            if (event.key === 'Enter') checkPromo();
         }
 
         function checkPromo() {
             const promoInput = document.getElementById('promoInput');
             const messageEl = document.getElementById('promoMessage');
             if (!promoInput || !messageEl) return;
-
             const promoCode = (promoInput.value || '').trim().toUpperCase();
-
-            messageEl.textContent = '';
-            messageEl.className = '';
-            validatedPromo = null;
-
+            messageEl.textContent = ''; messageEl.className = ''; validatedPromo = null;
             if (!promoCode) return;
-
-            // Check against dynamic codes sent from SQLite database
             const promo = window.PROMO_CODES[promoCode];
-
             if (promo && promo.active) {
-                validatedPromo = {
-                    code: promoCode,
-                    discount: promo.discount
-                };
+                validatedPromo = { code: promoCode, discount: promo.discount };
                 messageEl.textContent = `✅ Promo qabul qilindi! ${promo.discount}% chegirma`;
                 messageEl.className = 'success';
             } else {
@@ -1108,55 +1030,67 @@
 
         function placeOrder() {
             if (cart.length === 0) return alert('Savat bo\'sh!');
-
             const addrVal = (document.getElementById('addressInput')?.value || '').trim();
-            if (!addrVal) {
-                alert('Iltimos, yetkazib berish manzilini kiriting!');
-                document.getElementById('addressInput').focus();
-                return;
-            }
-
-            // Only use validated promo code
-            const promoCode = validatedPromo ? validatedPromo.code : '';
-
+            if (!addrVal) { alert('Iltimos, yetkazib berish manzilini kiriting!'); return; }
             const payload = {
                 type: 'order',
                 items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.qty })),
-                promo_code: promoCode,
+                promo_code: validatedPromo ? validatedPromo.code : '',
                 address: addrVal,
-                lang: LANG
+                lang: new URLSearchParams(window.location.search).get('lang') || 'uz'
             };
-
-            if (tg) {
-                tg.sendData(JSON.stringify(payload));
-            } else {
-                console.log("Order:", payload);
-                alert("Buyurtma yuborildi!");
-                clearCart();
-                closeCart();
-            }
+            if (tg) tg.sendData(JSON.stringify(payload));
+            else { console.log("Order:", payload); alert("Buyurtma yuborildi!"); clearCart(); closeCart(); }
         }
 
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-        // Bootsrtap
-        document.addEventListener('DOMContentLoaded', initApp);
+        // 4. Initialization
+        function bootstrap() {
+            console.log("Bootstraping app...");
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || 'uz';
+            const promoBase64 = urlParams.get('p');
 
-        // Auto Update Cats on Scroll
+            if (promoBase64) {
+                try {
+                    const decoded = atob(promoBase64.replace(/-/g, '+').replace(/_/g, '/'));
+                    window.PROMO_CODES = JSON.parse(decoded);
+                } catch (e) { console.error("Promo error:", e); }
+            }
+
+            // Sync Data
+            if (window.DYNAMIC_MENU_DATA && Object.keys(window.DYNAMIC_MENU_DATA).length > 0) {
+                finalMenu = window.DYNAMIC_MENU_DATA;
+            } else {
+                finalMenu = DEFAULT_MENU;
+            }
+
+            activeCat = Object.keys(finalMenu)[0] || "";
+            setLanguage(lang);
+            renderCats();
+            renderProducts();
+            updateCartUI();
+        }
+
+        // Run immediately as script is at end of body
+        bootstrap();
+
+        // Auto Scroll Update
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('.category-block');
             let current = '';
             sections.forEach(s => {
                 const top = s.offsetTop - 200;
-                if (window.pageYOffset >= top) current = s.id.replace('cat-', '').replace(/-/g, ' ');
-            });
-            if (current) {
-                // Find matching key in finalMenu
-                const matchingKey = Object.keys(finalMenu).find(k => k.replace(/\s/g, '-') === current.replace(/\s/g, '-'));
-                if (matchingKey && activeCat !== matchingKey) {
-                    activeCat = matchingKey;
-                    renderCats();
+                if (window.pageYOffset >= top) {
+                    // Reverse the safe ID back or find by header (simpler)
+                    const header = s.querySelector('.cat-name');
+                    if (header) current = header.innerText;
                 }
+            });
+            if (current && activeCat !== current) {
+                activeCat = current;
+                renderCats();
             }
         });
     </script>

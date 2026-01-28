@@ -1,4 +1,4 @@
-// Auto-generated menu data
+// Ultimate Robust Menu Data
 window.DYNAMIC_MENU_DATA = {
     "🔥 Specials": [
         { "n": "Kfc BURGER (+0.25 Cola)", "p": 33000, "i": "images/image2/kfc_burger.png" },
@@ -94,5 +94,38 @@ window.DYNAMIC_CATS = {
         "🍹 Cocktails": "🍹 Cocktails",
         "🥫 Souslar": "🥫 Souslar"
     },
-    // ... translations are already in the file, keeping logic simple
+    "ru": {
+        "🔥 Specials": "🔥 Акции",
+        "🌯 Lavash": "🌯 Лаваш",
+        "🍔 Burger": "🍔 Бургер",
+        "🥙 Doner": "🥙 Донер",
+        "🍗 KFC": "🍗 KFC",
+        "🌭 Xot-dog": "🌭 Хот-дог",
+        "🥪 Xaggi": "🥪 Хагги",
+        "🍗 Naggets": "🍗 Наггетсы",
+        "🧀 Pishloqli yostiqchalar": "🧀 Сырные",
+        "🥪 Klab sandwich": "🥪 Клаб",
+        "🍟 Fri": "🍟 Фри",
+        "🥟 Somsa": "🥟 Сомса",
+        "☕️ Ichimliklar": "☕️ Напитки",
+        "🍹 Cocktails": "🍹 Коктейли",
+        "🥫 Souslar": "🥫 Соусы"
+    },
+    "en": {
+        "🔥 Specials": "🔥 Specials",
+        "🌯 Lavash": "🌯 Lavash",
+        "🍔 Burger": "🍔 Burger",
+        "🥙 Doner": "🥙 Doner",
+        "🍗 KFC": "🍗 KFC",
+        "🌭 Xot-dog": "🌭 Hot-dog",
+        "🥪 Xaggi": "🥪 Haggi",
+        "🍗 Naggets": "🍗 Nuggets",
+        "🧀 Pishloqli yostiqchalar": "🧀 Cheese pods",
+        "🥪 Klab sandwich": "🥪 Club",
+        "🍟 Fri": "🍟 Fries",
+        "🥟 Somsa": "🥟 Somsa",
+        "☕️ Ichimliklar": "☕️ Drinks",
+        "🍹 Cocktails": "🍹 Cocktails",
+        "🥫 Souslar": "🥫 Sauces"
+    }
 };

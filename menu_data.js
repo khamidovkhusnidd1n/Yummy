@@ -413,3 +413,12 @@ function getPagedItems(page = 0) {
 // Export untuk lazy loading
 window.MENU_DATA = MENU_DATA;
 window.getPagedItems = getPagedItems;
+
+// Promo Codes Database (Client-side - for validation reference)
+window.PROMO_CODES = {
+    "SAVE50": { discount: 50, active: true },
+    "SAVE25": { discount: 25, active: true },
+    "SAVE10": { discount: 10, active: true },
+    "YUMMY20": { discount: 20, active: true },
+    "MAZZA": { discount: 15, active: true },
+};

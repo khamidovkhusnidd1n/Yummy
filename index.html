@@ -564,7 +564,7 @@
         .promo-cart-row {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .promo-cart-input {
@@ -577,6 +577,27 @@
             font-weight: 600;
             outline: none;
             background: var(--bg-secondary);
+        }
+
+        .promo-cart-input:focus {
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        #promoMessage {
+            min-height: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+
+        #promoMessage.success {
+            color: #27ae60;
+        }
+
+        #promoMessage.error {
+            color: var(--accent);
         }
 
         .total-row {
@@ -760,8 +781,12 @@
             </div>
             <div class="checkout-footer">
                 <div class="promo-cart-row">
-                    <input type="text" id="promoInput" class="promo-cart-input" placeholder="Promo kod (agar bo'lsa)">
+                    <input type="text" id="promoInput" class="promo-cart-input" placeholder="Promo kod (agar bo'lsa)" onkeyup="handlePromoKeyup(event)">
+                    <button class="order-btn" id="promoCheckBtn" onclick="checkPromo()" style="flex: 0 0 auto; width: auto; height: 48px; padding: 0 20px; font-size: 14px; gap: 6px;">
+                        ✓
+                    </button>
                 </div>
+                <div id="promoMessage"></div>
                 <div class="total-row">
                     <span class="total-label">Jami:</span>
                     <span class="total-val" id="totalVal">0 so'm</span>
@@ -984,15 +1009,60 @@
             `;
         }
 
+        let validatedPromo = null;
+
+        function handlePromoKeyup(event) {
+            const messageEl = document.getElementById('promoMessage');
+            messageEl.textContent = '';
+            messageEl.className = '';
+            
+            if (event.key === 'Enter') {
+                checkPromo();
+            }
+        }
+
+        function checkPromo() {
+            const promoInput = document.getElementById('promoInput');
+            const messageEl = document.getElementById('promoMessage');
+            const promoCode = (promoInput.value || '').trim().toUpperCase();
+
+            messageEl.textContent = '';
+            messageEl.className = '';
+            validatedPromo = null;
+
+            if (!promoCode) {
+                return;
+            }
+
+            // Check if promo exists in client-side database
+            const promo = window.PROMO_CODES && window.PROMO_CODES[promoCode];
+
+            if (promo && promo.active) {
+                // Valid promo
+                validatedPromo = {
+                    code: promoCode,
+                    discount: promo.discount
+                };
+                messageEl.textContent = `✅ Promo qabul qilindi! ${promo.discount}% chegirma`;
+                messageEl.className = 'success';
+            } else {
+                // Invalid promo
+                messageEl.textContent = '❌ Promo kod noto\'g\'ri yoki tugagan!';
+                messageEl.className = 'error';
+                promoInput.value = '';
+            }
+        }
+
         function placeOrder() {
             if (cart.length === 0) return alert('Savat bo\'sh!');
 
-            const promoVal = document.getElementById('promoInput')?.value || '';
+            // Only use validated promo code
+            const promoCode = validatedPromo ? validatedPromo.code : '';
 
             const payload = {
                 type: 'order',
                 items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.qty })),
-                promo_code: promoVal,
+                promo_code: promoCode,
                 lang: LANG
             };
 

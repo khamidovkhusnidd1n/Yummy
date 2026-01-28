@@ -121,18 +121,19 @@ async def get_location(message: types.Message, state: FSMContext):
         await state.clear()
         return
 
-    # Only accept text input - no location sharing button
     if message.location:
+        # If user manages to send GPS (even from old buttons), accept it nicely
+        lat, lon = message.location.latitude, message.location.longitude
+        location_str = f"📍 GPS ({lat}, {lon})"
+        maps_url = f"https://www.google.com/maps?q={lat},{lon}"
+    elif message.text and len(message.text.strip()) > 1:
+        # Manual text entry
+        location_str = message.text
+        maps_url = message.text
+    else:
+        # Empty or invalid input
         await message.answer(s['location_req'], reply_markup=kb.location_keyboard(lang))
         return
-    
-    # Accept manual text input only
-    if not message.text or len(message.text.strip()) < 1:
-        await message.answer(s['location_req'], reply_markup=kb.location_keyboard(lang))
-        return
-        
-    location_str = message.text
-    maps_url = message.text
 
     await state.update_data(location=location_str, maps_url=maps_url)
     await show_order_summary(message, state)

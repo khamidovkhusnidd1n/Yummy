@@ -11,7 +11,7 @@ def lang_keyboard():
 
 def main_menu(lang='uz', is_admin=False):
     s = STRINGS[lang]
-    url = f"https://khamidovkhusnidd1n.github.io/Yummy/?lang={lang}&v=20260127"
+    url = f"https://khamidovkhusnidd1n.github.io/Yummy/?lang={lang}&v=20260128_1034"
     
     kb = [
         [KeyboardButton(text=s['main_menu_btn'], web_app=WebAppInfo(url=url))],
@@ -38,8 +38,7 @@ def delivery_method_kb(lang='uz'):
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
 def location_keyboard(lang='uz'):
-    # s = STRINGS[lang]
-    # kb = [[KeyboardButton(text=s['location_btn'], request_location=True)]]
+    """Users enter location manually - no location button"""
     return ReplyKeyboardRemove()
 def order_confirm_kb(lang='uz'):
     s = STRINGS[lang]
@@ -49,9 +48,9 @@ def order_confirm_kb(lang='uz'):
     ]
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
-def promo_skip_kb(lang='uz'):
+def main_menu_button_kb(lang='uz'):
     s = STRINGS[lang]
-    kb = [[KeyboardButton(text=s.get('skip_btn', 'Skip ➡️'))]]
+    kb = [[KeyboardButton(text=s['main_menu_btn'])]]
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
 

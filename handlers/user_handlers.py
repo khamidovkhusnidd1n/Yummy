@@ -122,31 +122,80 @@ async def get_location(message: types.Message, state: FSMContext):
         await state.clear()
         return
 
+    # Only accept text input - no location sharing button
     if message.location:
-        lat, lon = message.location.latitude, message.location.longitude
-        location_str = f"📍 ({lat}, {lon})"
-        maps_url = f"https://www.google.com/maps?q={lat},{lon}"
-    else:
-        location_str = message.text
-        maps_url = message.text
+        await message.answer(s['location_req'], reply_markup=kb.location_keyboard(lang))
+        return
+    
+    # Accept manual text input only
+    if not message.text or len(message.text.strip()) < 1:
+        await message.answer(s['location_req'], reply_markup=kb.location_keyboard(lang))
+        return
+        
+    location_str = message.text
+    maps_url = message.text
 
     await state.update_data(location=location_str, maps_url=maps_url)
-    await show_order_summary(message, state)
+    await ask_for_promo(message, state)
+
+async def ask_for_promo(message: types.Message, state: FSMContext):
+    """Ask user for promo code before showing order summary"""
+    user_id = message.from_user.id
+    lang = db.get_user_lang(user_id)
+    s = STRINGS[lang]
+    
+    # Check if promo code already came from WebApp
+    data = await state.get_data()
+    promo_code = data.get('promo_code_from_app')
+    
+    if promo_code:
+        # If already from app, validate and proceed
+        promo = db.get_promo_code(promo_code.upper())
+        if promo:
+            discount_percent = promo[2]
+            await state.update_data(promo_code=promo_code.upper(), discount_percent=discount_percent)
+        await show_order_summary(message, state)
+    else:
+        # Ask user to enter promo code
+        await state.set_state(OrderState.promo)
+        promo_prompt = s.get('promo_req', "📝 Agar promo kodingiz bo'lsa, uni kiriting. Yoki <skip> deb yozing bekor qilish uchun:")
+        await message.answer(promo_prompt, reply_markup=types.ReplyKeyboardRemove())
+
+@router.message(OrderState.promo)
+async def get_promo(message: types.Message, state: FSMContext):
+    """Handle promo code input with inline validation"""
+    user_id = message.from_user.id
+    lang = db.get_user_lang(user_id)
+    s = STRINGS[lang]
+    promo_input = message.text.strip().upper()
+    
+    # Check if user wants to skip
+    if promo_input in ['SKIP', 'BEKOR', 'БЕЗ', '']:
+        await state.update_data(promo_code=None, discount_percent=0)
+        await show_order_summary(message, state)
+        return
+    
+    # Validate promo code
+    promo = db.get_promo_code(promo_input)
+    if promo and promo[3] == 1:  # Check if active
+        discount_percent = promo[2]
+        await state.update_data(promo_code=promo_input, discount_percent=discount_percent)
+        success_msg = s.get('promo_applied', "✅ Promo kod qabul qilindi! {percent}% chegirma berildi.").format(percent=discount_percent)
+        await message.answer(success_msg)
+        await show_order_summary(message, state)
+    else:
+        # Invalid promo - show error and ask again
+        error_msg = s.get('promo_invalid', "❌ Promo kod noto'g'ri yoki tugagan. Qayta urinib ko'ring yoki <skip> deb yozing:")
+        await message.answer(error_msg)
 
 async def show_order_summary(message: types.Message, state: FSMContext):
+    """Show order confirmation summary"""
     user_id = message.from_user.id
     lang = db.get_user_lang(user_id)
     s = STRINGS[lang]
     data = await state.get_data()
     
-    # Check if promo code came from WebApp
-    promo_code = data.get('promo_code_from_app')
-    discount_percent = 0
-    if promo_code:
-        promo = db.get_promo_code(promo_code.upper())
-        if promo:
-            discount_percent = promo[2]
-            await state.update_data(promo_code=promo_code.upper(), discount_percent=discount_percent)
+    discount_percent = data.get('discount_percent', 0)
 
     items_json = db.get_cart(user_id)
     if not items_json:
@@ -230,12 +279,13 @@ async def process_confirm(message: types.Message, state: FSMContext):
         db.clear_cart(user_id)
         await state.clear()
         
-        # Force Main Menu refresh
-        await message.answer("🏠 Asosiy menyu", reply_markup=kb.main_menu(lang, is_admin))
+        # Show order confirmation with Main Menu button
+        await message.answer("✅ Asosiy menyuga qaytish:", reply_markup=kb.main_menu(lang, is_admin))
         
     elif message.text == s['cancel_btn']:
         await state.clear()
-        await message.answer(s['order_cancelled'], reply_markup=kb.main_menu(lang))
+        is_admin = (message.from_user.id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(message.from_user.id))
+        await message.answer(s['order_cancelled'], reply_markup=kb.main_menu(lang, is_admin))
 
 @router.message(F.content_type == types.ContentType.WEB_APP_DATA)
 async def web_app_data_handler(message: types.Message, state: FSMContext):

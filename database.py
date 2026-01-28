@@ -74,19 +74,27 @@ class Database:
                 added_at TIMESTAMP
             )
         """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS cart (
+                user_id INTEGER PRIMARY KEY,
+                items TEXT,
+                updated_at TIMESTAMP
+            )
+        """)
         self.conn.commit()
 
     def add_user(self, user_id, full_name, username, phone):
-        # Update user info but don't overwrite language if it exists
         self.cursor.execute("INSERT INTO users (user_id, full_name, username, phone) VALUES (?, ?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET full_name=excluded.full_name, username=excluded.username, phone=excluded.phone", 
                             (user_id, full_name, username, phone))
         self.conn.commit()
+
     def set_user_lang(self, user_id, lang):
         self.cursor.execute(
             "INSERT INTO users (user_id, lang) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET lang=excluded.lang",
             (user_id, lang)
         )
         self.conn.commit()
+
     def get_user_lang(self, user_id):
         res = self.cursor.execute("SELECT lang FROM users WHERE user_id = ?", (user_id,)).fetchone()
         return res[0] if res else 'uz'
@@ -107,13 +115,11 @@ class Database:
         self.conn.commit()
 
     def get_stats(self):
-        # Total Stats
         total_orders = self.cursor.execute("SELECT COUNT(*) FROM orders WHERE status = 'completed'").fetchone()[0]
         total_revenue = self.cursor.execute("SELECT SUM(total_price) FROM orders WHERE status = 'completed'").fetchone()[0] or 0
         return total_orders, total_revenue
 
     def get_daily_stats(self):
-        # Stats for today
         today = datetime.now().strftime('%Y-%m-%d')
         orders = self.cursor.execute("SELECT COUNT(*) FROM orders WHERE status = 'completed' AND date(created_at) = ?", (today,)).fetchone()[0]
         revenue = self.cursor.execute("SELECT SUM(total_price) FROM orders WHERE status = 'completed' AND date(created_at) = ?", (today,)).fetchone()[0] or 0
@@ -137,10 +143,6 @@ class Database:
         """).fetchall()
 
     def get_top_products(self):
-        # This is a bit complex as items are stored as a string. 
-        # For a truly 'sale-ready' bot, we should have an order_items table.
-        # For now, we'll do a simple text-based count or suggest refactoring.
-        # Let's assume we want to see the most frequent order strings for now.
         return self.cursor.execute("""
             SELECT items, COUNT(*) as count 
             FROM orders 
@@ -170,27 +172,10 @@ class Database:
             ORDER BY date ASC
         """, (f'-{days} days',)).fetchall()
 
-    # Fixing the accidentally removed users and orders tables
     def _create_users_table(self):
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                user_id INTEGER PRIMARY KEY,
-                full_name TEXT,
-                phone TEXT,
-                lang TEXT DEFAULT 'uz'
-            )
-        """)
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS orders (
-                order_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER,
-                items TEXT,
-                total_price INTEGER,
-                status TEXT DEFAULT 'pending',
-                location TEXT,
-                created_at TIMESTAMP
-            )
-        """)
+        # Already handled in create_tables
+        pass
+
     # --- Product Management ---
     def add_product(self, category_id, name, price, image):
         self.cursor.execute("INSERT INTO products (category_id, name, price, image) VALUES (?, ?, ?, ?)",
@@ -238,7 +223,6 @@ class Database:
         self.conn.commit()
 
     def remove_admin(self, user_id):
-        # Instead of deleting, we set is_active = 0
         self.cursor.execute("UPDATE admins SET is_active = 0 WHERE user_id = ?", (user_id,))
         self.conn.commit()
 
@@ -272,6 +256,19 @@ class Database:
     def get_all_users(self):
         return self.cursor.execute("SELECT user_id FROM users").fetchall()
 
-db = Database("yummy_bot.db")
-db._create_users_table()
+    # --- Cart Management ---
+    def update_cart(self, user_id, items_json):
+        self.cursor.execute("INSERT OR REPLACE INTO cart (user_id, items, updated_at) VALUES (?, ?, ?)",
+                            (user_id, items_json, datetime.now()))
+        self.conn.commit()
 
+    def get_cart(self, user_id):
+        res = self.cursor.execute("SELECT items FROM cart WHERE user_id = ?", (user_id,)).fetchone()
+        return res[0] if res else None
+
+    def clear_cart(self, user_id):
+        self.cursor.execute("DELETE FROM cart WHERE user_id = ?", (user_id,))
+        self.conn.commit()
+
+db = Database("yummy_bot.db")
+db.create_tables()

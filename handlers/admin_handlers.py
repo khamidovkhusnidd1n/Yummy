@@ -504,6 +504,11 @@ async def admin_add_prod_image(message: types.Message, state: FSMContext):
     
     # Add product to database
     db.add_product(data['cat_id'], data['name'], data['price'], image_path)
+    
+    # Sync WebApp
+    from utils.publisher import publish_menu
+    publish_menu()
+
     await message.answer(f"✅ Taom qo'shildi!\n\n📝 Nom: {data['name']}\n💰 Narx: {data['price']:,} so'm", reply_markup=admin_profile_kb(True))
     await state.clear()
 
@@ -553,6 +558,11 @@ async def admin_edit_price_save(message: types.Message, state: FSMContext):
         return await message.answer("Iltimos, faqat raqam kiriting!")
     data = await state.get_data()
     db.update_product_price(data['prod_id'], int(message.text))
+    
+    # Sync WebApp
+    from utils.publisher import publish_menu
+    publish_menu()
+
     await message.answer(f"✅ Narx o'zgartirildi: {message.text} so'm", reply_markup=admin_profile_kb(True))
     await state.clear()
 
@@ -562,6 +572,11 @@ async def admin_del_prod_selected(callback: types.CallbackQuery):
         return await callback.answer("Ruxsat yo'q.", show_alert=True)
     prod_id = int(callback.data.split("_")[3])
     db.delete_product(prod_id)
+    
+    # Sync WebApp
+    from utils.publisher import publish_menu
+    publish_menu()
+
     await callback.message.answer("✅ Taom o'chirildi.")
     await admin_menu_manage_callback(callback)
     await callback.answer()

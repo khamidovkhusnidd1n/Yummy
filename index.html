@@ -846,14 +846,13 @@
             ]
         };
 
-        let finalMenu = window.DYNAMIC_MENU_DATA || {};
+        let finalMenu = DEFAULT_MENU;
         let cart = [];
-        let activeCat = Object.keys(finalMenu)[0] || "";
+        let activeCat = "";
         let validatedPromo = null;
         window.PROMO_CODES = {};
 
         function setLanguage(lang) {
-            // Placeholder if translations needed on UI elements
             console.log("Language set to:", lang);
             document.documentElement.lang = lang;
         }
@@ -872,12 +871,15 @@
                 }
             }
 
+            // Crucial: Re-check dynamic data and fallback if empty
+            if (window.DYNAMIC_MENU_DATA && Object.keys(window.DYNAMIC_MENU_DATA).length > 0) {
+                finalMenu = window.DYNAMIC_MENU_DATA;
+            } else {
+                finalMenu = DEFAULT_MENU;
+            }
+
+            activeCat = Object.keys(finalMenu)[0] || "";
             setLanguage(lang);
-
-            // Re-sync finalMenu just in case DYNAMIC_MENU_DATA loaded after script start
-            finalMenu = window.DYNAMIC_MENU_DATA || DEFAULT_MENU;
-            activeCat = Object.keys(finalMenu)[0];
-
             renderCats();
             renderProducts();
             updateCartUI();

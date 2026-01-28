@@ -1,5 +1,8 @@
 ﻿from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, ReplyKeyboardRemove
 from translations import STRINGS
+from database import db
+import json
+import base64
 
 def lang_keyboard():
     kb = [
@@ -11,7 +14,13 @@ def lang_keyboard():
 
 def main_menu(lang='uz', is_admin=False):
     s = STRINGS[lang]
-    url = f"https://khamidovkhusnidd1n.github.io/Yummy/?lang={lang}&v=20260128_1034"
+    
+    # Fetch active promo codes from DB to sync with WebApp
+    active_promos = db.get_all_promo_codes()
+    promo_map = {p[1].upper(): {"discount": p[2], "active": bool(p[3])} for p in active_promos if p[3]}
+    promo_data = base64.b64encode(json.dumps(promo_map).encode()).decode()
+    
+    url = f"https://khamidovkhusnidd1n.github.io/Yummy/?lang={lang}&p={promo_data}&v=20260128_1215"
     
     kb = [
         [KeyboardButton(text=s['main_menu_btn'], web_app=WebAppInfo(url=url))],

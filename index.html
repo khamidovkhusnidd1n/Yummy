@@ -781,12 +781,21 @@
             </div>
             <div class="checkout-footer">
                 <div class="promo-cart-row">
-                    <input type="text" id="promoInput" class="promo-cart-input" placeholder="Promo kod (agar bo'lsa)" onkeyup="handlePromoKeyup(event)">
-                    <button class="order-btn" id="promoCheckBtn" onclick="checkPromo()" style="flex: 0 0 auto; width: auto; height: 48px; padding: 0 20px; font-size: 14px; gap: 6px;">
+                    <input type="text" id="promoInput" class="promo-cart-input" placeholder="Promo kod (agar bo'lsa)"
+                        onkeyup="handlePromoKeyup(event)">
+                    <button class="order-btn" id="promoCheckBtn" onclick="checkPromo()"
+                        style="flex: 0 0 auto; width: auto; height: 48px; padding: 0 20px; font-size: 14px; gap: 6px;">
                         ✓
                     </button>
                 </div>
                 <div id="promoMessage"></div>
+                <div class="address-container" style="margin-bottom: 20px;">
+                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-secondary);">
+                        Yetkazib berish manzili:</div>
+                    <textarea id="addressInput" class="promo-cart-input"
+                        style="height: 80px; padding: 12px; resize: none; width: 100%; border-radius: 18px;"
+                        placeholder="Shahar, ko'cha, uy raqami va mo'ljalni kiriting..."></textarea>
+                </div>
                 <div class="total-row">
                     <span class="total-label">Jami:</span>
                     <span class="total-val" id="totalVal">0 so'm</span>
@@ -1010,12 +1019,35 @@
         }
 
         let validatedPromo = null;
+        window.PROMO_CODES = {}; // Source of truth from backend
+
+        function initApp() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || 'uz';
+            const promoBase64 = urlParams.get('p');
+
+            // Sync promo codes from URL parameter (sent by backend)
+            if (promoBase64) {
+                try {
+                    // Use a more robust base64 decoding (handle padding and URL safe charts if needed)
+                    const decoded = atob(promoBase64.replace(/-/g, '+').replace(/_/g, '/'));
+                    window.PROMO_CODES = JSON.parse(decoded);
+                    console.log("Promo codes synchronized from DB:", window.PROMO_CODES);
+                } catch (e) {
+                    console.error("Promo sync error:", e);
+                }
+            }
+
+            setLanguage(lang);
+            renderMenu();
+            updateCartUI();
+        }
 
         function handlePromoKeyup(event) {
             const messageEl = document.getElementById('promoMessage');
             messageEl.textContent = '';
             messageEl.className = '';
-            
+
             if (event.key === 'Enter') {
                 checkPromo();
             }
@@ -1024,21 +1056,20 @@
         function checkPromo() {
             const promoInput = document.getElementById('promoInput');
             const messageEl = document.getElementById('promoMessage');
+            if (!promoInput || !messageEl) return;
+
             const promoCode = (promoInput.value || '').trim().toUpperCase();
 
             messageEl.textContent = '';
             messageEl.className = '';
             validatedPromo = null;
 
-            if (!promoCode) {
-                return;
-            }
+            if (!promoCode) return;
 
-            // Check if promo exists in client-side database
-            const promo = window.PROMO_CODES && window.PROMO_CODES[promoCode];
+            // Check against dynamic codes sent from SQLite database
+            const promo = window.PROMO_CODES[promoCode];
 
             if (promo && promo.active) {
-                // Valid promo
                 validatedPromo = {
                     code: promoCode,
                     discount: promo.discount
@@ -1046,7 +1077,6 @@
                 messageEl.textContent = `✅ Promo qabul qilindi! ${promo.discount}% chegirma`;
                 messageEl.className = 'success';
             } else {
-                // Invalid promo
                 messageEl.textContent = '❌ Promo kod noto\'g\'ri yoki tugagan!';
                 messageEl.className = 'error';
                 promoInput.value = '';
@@ -1056,6 +1086,13 @@
         function placeOrder() {
             if (cart.length === 0) return alert('Savat bo\'sh!');
 
+            const addrVal = (document.getElementById('addressInput')?.value || '').trim();
+            if (!addrVal) {
+                alert('Iltimos, yetkazib berish manzilini kiriting!');
+                document.getElementById('addressInput').focus();
+                return;
+            }
+
             // Only use validated promo code
             const promoCode = validatedPromo ? validatedPromo.code : '';
 
@@ -1063,6 +1100,7 @@
                 type: 'order',
                 items: cart.map(i => ({ name: i.name, price: i.price, quantity: i.qty })),
                 promo_code: promoCode,
+                address: addrVal,
                 lang: LANG
             };
 

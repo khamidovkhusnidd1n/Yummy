@@ -18,7 +18,6 @@ router = Router()
 class OrderState(StatesGroup):
     phone = State()
     method = State()
-    location = State()
     confirm = State()
 
 @router.message(CommandStart())
@@ -95,48 +94,15 @@ async def get_method(message: types.Message, state: FSMContext):
     s = STRINGS[lang]
     
     if message.text in [STR_UZ['method_delivery'], STR_RU['method_delivery'], STR_EN['method_delivery']]:
+        # Location is already in WebApp payload, so just proceed
         await state.update_data(method='delivery')
-        data = await state.get_data()
-        if data.get('location'):
-            await show_order_summary(message, state)
-        else:
-            await state.set_state(OrderState.location)
-            await message.answer(s['location_req'], reply_markup=kb.location_keyboard(lang))
+        await show_order_summary(message, state)
             
     elif message.text in [STR_UZ['method_takeaway'], STR_RU['method_takeaway'], STR_EN['method_takeaway']]:
         await state.update_data(method='takeaway', location="O'zi olib ketadi", maps_url=None)
         await show_order_summary(message, state)
     else:
         await message.answer(s['method_req'], reply_markup=kb.delivery_method_kb(lang))
-
-@router.message(OrderState.location)
-async def get_location(message: types.Message, state: FSMContext):
-    user_id = message.from_user.id
-    lang = db.get_user_lang(user_id)
-    s = STRINGS[lang]
-    
-    items_json = db.get_cart(user_id)
-    if not items_json:
-        await message.answer("Savat bo'sh!")
-        await state.clear()
-        return
-
-    if message.location:
-        # If user manages to send GPS (even from old buttons), accept it nicely
-        lat, lon = message.location.latitude, message.location.longitude
-        location_str = f"📍 GPS ({lat}, {lon})"
-        maps_url = f"https://www.google.com/maps?q={lat},{lon}"
-    elif message.text and len(message.text.strip()) > 1:
-        # Manual text entry
-        location_str = message.text
-        maps_url = message.text
-    else:
-        # Empty or invalid input
-        await message.answer(s['location_req'], reply_markup=kb.location_keyboard(lang))
-        return
-
-    await state.update_data(location=location_str, maps_url=maps_url)
-    await show_order_summary(message, state)
 
 async def show_order_summary(message: types.Message, state: FSMContext):
     """Show order confirmation summary"""
@@ -249,11 +215,10 @@ async def web_app_data_handler(message: types.Message, state: FSMContext):
         db.update_cart(user_id, json.dumps(items))
         
         await state.update_data(promo_code_from_app=data.get('promo_code'))
-
-        loc = data.get('location')
-        if isinstance(loc, dict) and loc.get('lat') is not None:
-            lat, lon = loc['lat'], loc['lon']
-            await state.update_data(location=f"📍 ({lat}, {lon})", maps_url=f"https://www.google.com/maps?q={lat},{lon}")
+        
+        # New: Save address from WebApp
+        if data.get('address'):
+            await state.update_data(location=data.get('address'), maps_url=data.get('address'))
 
         await state.set_state(OrderState.phone)
         await message.answer(s['phone_req'], reply_markup=kb.phone_keyboard(lang))

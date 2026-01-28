@@ -916,26 +916,15 @@
         ];
 
         // ===== DISCOUNT SYSTEM =====
-        function calculateQuantityDiscount(itemCount) {
-            if (itemCount >= 5) return 10; // 10% discount
-            if (itemCount >= 2) return 5;  // 5% discount
-            return 0;
-        }
-
-        function applyQuantityDiscount(total, itemCount) {
-            const discountPercent = calculateQuantityDiscount(itemCount);
-            return Math.floor(total * discountPercent / 100);
-        }
-
+        // Only promo code discount (no quantity-based discount)
         function calculateFinalDiscount(total, promoCode, quantityCount, isFirstTime = false) {
             let totalDiscount = 0;
-            if (quantityCount >= 2) {
-                totalDiscount += applyQuantityDiscount(total, quantityCount);
-            }
+
+            // Only apply promo code discount
             if (validatedPromo) {
                 let promoDiscount = 0;
                 if (validatedPromo.type === 'percent') {
-                    promoDiscount = Math.floor((total - totalDiscount) * validatedPromo.discount / 100);
+                    promoDiscount = Math.floor(total * validatedPromo.discount / 100);
                 } else {
                     promoDiscount = validatedPromo.discount;
                 }

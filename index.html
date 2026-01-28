@@ -847,10 +847,7 @@
         };
 
         // Determine which data to use
-        let finalMenu = DEFAULT_MENU;
-        if (window.DYNAMIC_MENU_DATA && Object.keys(window.DYNAMIC_MENU_DATA).length > 0) {
-            finalMenu = window.DYNAMIC_MENU_DATA;
-        }
+        let finalMenu = window.DYNAMIC_MENU_DATA || {};
 
         let cart = [];
         let activeCat = Object.keys(finalMenu)[0];

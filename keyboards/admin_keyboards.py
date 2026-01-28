@@ -56,12 +56,14 @@ def menu_manage_reply_kb():
     ]
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
-def promo_manage_kb():
-    kb = [
-        [InlineKeyboardButton(text="➕ Promo qo'shish", callback_data="admin_add_promo")],
-        [InlineKeyboardButton(text="📜 Promolar ro'yxati", callback_data="admin_list_promo")],
-        [InlineKeyboardButton(text="🔙 Orqaga", callback_data="admin_dashboard")]
-    ]
+def promo_manage_kb(is_super_admin=False):
+    kb = []
+    if is_super_admin:
+        # Super admin - all options
+        kb.append([InlineKeyboardButton(text="➕ Promo qo'shish", callback_data="admin_add_promo")])
+    # All admins can view
+    kb.append([InlineKeyboardButton(text="📜 Promolar ro'yxati", callback_data="admin_list_promo")])
+    kb.append([InlineKeyboardButton(text="🔙 Orqaga", callback_data="admin_dashboard")])
     return InlineKeyboardMarkup(inline_keyboard=kb)
 
 def mailing_kb():

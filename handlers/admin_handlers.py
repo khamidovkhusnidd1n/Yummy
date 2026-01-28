@@ -214,15 +214,19 @@ async def admin_menu_manage_callback(callback: types.CallbackQuery):
 @router.callback_query(F.data == "admin_promo_manage")
 @router.message(F.text == "🎟 Promolar")
 async def admin_promo_manage_callback(event: types.CallbackQuery | types.Message):
-    if not db.has_permission(event.from_user.id, 'promos'):
+    # All admins can view promo panel, but only super admin can add/delete
+    admin = db.get_admin(event.from_user.id)
+    if not admin:
         if isinstance(event, types.CallbackQuery):
-            await event.answer("Sizda promolarni boshqarish huquqi yo'q.", show_alert=True)
+            await event.answer("Sizda admin huquqi yo'q.", show_alert=True)
         return
+    
+    is_super = admin[1] == 'super_admin'
     if isinstance(event, types.CallbackQuery):
-        await event.message.edit_text("🎟 **Promo Kodlar Boshqaruvi**", reply_markup=promo_manage_kb())
+        await event.message.edit_text("🎟 **Promo Kodlar Boshqaruvi**", reply_markup=promo_manage_kb(is_super_admin=is_super))
         await event.answer()
     else:
-        await event.answer("🎟 **Promo Kodlar Boshqaruvi**", reply_markup=promo_manage_kb())
+        await event.answer("🎟 **Promo Kodlar Boshqaruvi**", reply_markup=promo_manage_kb(is_super_admin=is_super))
 
 @router.callback_query(F.data == "admin_mailing")
 @router.message(F.text == "📢 Mailing")
@@ -592,8 +596,10 @@ async def admin_del_prod_start(callback: types.CallbackQuery):
 # --- Promo Code Handlers ---
 @router.callback_query(F.data == "admin_add_promo")
 async def admin_add_promo_start(callback: types.CallbackQuery, state: FSMContext):
-    if not db.has_permission(callback.from_user.id, 'promos'):
-        return await callback.answer("Ruxsat yo'q.", show_alert=True)
+    # Only Super Admin can add promo codes
+    admin = db.get_admin(callback.from_user.id)
+    if not admin or admin[1] != 'super_admin':
+        return await callback.answer("❌ Faqat super admin promo kodi qo'sha oladi!", show_alert=True)
     await callback.message.answer("Yangi promo kodni kiriting (masalan: YUMMY2024):", reply_markup=cancel_kb())
     await state.set_state(AdminStates.adding_promo_code)
     await callback.answer()
@@ -615,26 +621,37 @@ async def admin_add_promo_discount(message: types.Message, state: FSMContext):
 
 @router.callback_query(F.data == "admin_list_promo")
 async def admin_list_promo(callback: types.CallbackQuery):
-    if not db.has_permission(callback.from_user.id, 'promos'):
-        return await callback.answer("Ruxsat yo'q.", show_alert=True)
+    # All admins can view promo codes
+    admin = db.get_admin(callback.from_user.id)
+    if not admin:
+        return await callback.answer("❌ Admin huquqi yo'q!", show_alert=True)
+    
+    is_super = admin[1] == 'super_admin'
     promos = db.get_all_promo_codes()
     text = "📜 **Mavjud promo kodlar:**\n\n"
     kb = []
     if promos:
         for p_id, code, disc, active, expiry in promos:
             text += f"- {code}: {disc}% ({'Faol' if active else 'No-faol'})\n"
-            kb.append([InlineKeyboardButton(text=f"❌ {code} ni o'chirish", callback_data=f"admin_pdel_{p_id}")])
+            # Delete button only for super admin
+            if is_super:
+                kb.append([InlineKeyboardButton(text=f"❌ {code} ni o'chirish", callback_data=f"admin_pdel_{p_id}")])
     else:
         text += "Hozircha promo kodlar yo'q."
     
+    if not is_super:
+        text += "\n\n💡 _Promo kodlarni qo'shish/o'chirish uchun super admin bo'lishingiz kerak._"
+    
     kb.append([InlineKeyboardButton(text="🔙 Orqaga", callback_data="admin_promo_manage")])
-    await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=kb))
+    await callback.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=kb), parse_mode="Markdown")
     await callback.answer()
 
 @router.callback_query(F.data.startswith("admin_pdel_"))
 async def admin_promo_delete(callback: types.CallbackQuery):
-    if not db.has_permission(callback.from_user.id, 'promos'):
-        return await callback.answer("Ruxsat yo'q.", show_alert=True)
+    # Only Super Admin can delete promo codes
+    admin = db.get_admin(callback.from_user.id)
+    if not admin or admin[1] != 'super_admin':
+        return await callback.answer("❌ Faqat super admin promo kodini o'chira oladi!", show_alert=True)
     p_id = int(callback.data.split("_")[2])
     db.delete_promo_code(p_id)
     await callback.message.answer("✅ Promo kod o'chirildi.")

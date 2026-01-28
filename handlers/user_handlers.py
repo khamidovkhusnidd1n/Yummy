@@ -19,7 +19,6 @@ class OrderState(StatesGroup):
     phone = State()
     method = State()
     location = State()
-    promo = State()
     confirm = State()
 
 @router.message(CommandStart())
@@ -136,57 +135,7 @@ async def get_location(message: types.Message, state: FSMContext):
     maps_url = message.text
 
     await state.update_data(location=location_str, maps_url=maps_url)
-    await ask_for_promo(message, state)
-
-async def ask_for_promo(message: types.Message, state: FSMContext):
-    """Ask user for promo code before showing order summary"""
-    user_id = message.from_user.id
-    lang = db.get_user_lang(user_id)
-    s = STRINGS[lang]
-    
-    # Check if promo code already came from WebApp
-    data = await state.get_data()
-    promo_code = data.get('promo_code_from_app')
-    
-    if promo_code:
-        # If already from app, validate and proceed
-        promo = db.get_promo_code(promo_code.upper())
-        if promo:
-            discount_percent = promo[2]
-            await state.update_data(promo_code=promo_code.upper(), discount_percent=discount_percent)
-        await show_order_summary(message, state)
-    else:
-        # Ask user to enter promo code
-        await state.set_state(OrderState.promo)
-        promo_prompt = s.get('promo_req', "📝 Agar promo kodingiz bo'lsa, uni kiriting. Yoki <skip> deb yozing bekor qilish uchun:")
-        await message.answer(promo_prompt, reply_markup=types.ReplyKeyboardRemove())
-
-@router.message(OrderState.promo)
-async def get_promo(message: types.Message, state: FSMContext):
-    """Handle promo code input with inline validation"""
-    user_id = message.from_user.id
-    lang = db.get_user_lang(user_id)
-    s = STRINGS[lang]
-    promo_input = message.text.strip().upper()
-    
-    # Check if user wants to skip
-    if promo_input in ['SKIP', 'BEKOR', 'БЕЗ', '']:
-        await state.update_data(promo_code=None, discount_percent=0)
-        await show_order_summary(message, state)
-        return
-    
-    # Validate promo code
-    promo = db.get_promo_code(promo_input)
-    if promo and promo[3] == 1:  # Check if active
-        discount_percent = promo[2]
-        await state.update_data(promo_code=promo_input, discount_percent=discount_percent)
-        success_msg = s.get('promo_applied', "✅ Promo kod qabul qilindi! {percent}% chegirma berildi.").format(percent=discount_percent)
-        await message.answer(success_msg)
-        await show_order_summary(message, state)
-    else:
-        # Invalid promo - show error and ask again
-        error_msg = s.get('promo_invalid', "❌ Promo kod noto'g'ri yoki tugagan. Qayta urinib ko'ring yoki <skip> deb yozing:")
-        await message.answer(error_msg)
+    await show_order_summary(message, state)
 
 async def show_order_summary(message: types.Message, state: FSMContext):
     """Show order confirmation summary"""

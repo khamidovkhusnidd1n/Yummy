@@ -96,7 +96,12 @@ def main():
     # Initialize admins from config
     from config import SUPER_ADMINS, WORKERS
     for admin_id in SUPER_ADMINS:
-        if not db.get_admin(admin_id):
+        # Always update super admin permissions to ensure they have all rights
+        existing = db.get_admin(admin_id)
+        if existing:
+            db.update_admin_permissions(admin_id, 'manage_admins,menu,orders,promos,mailing,stats')
+            db.update_admin_role(admin_id, 'super_admin')
+        else:
             db.add_admin(admin_id, role='super_admin', permissions='manage_admins,menu,orders,promos,mailing,stats')
     for worker_id in WORKERS:
         if not db.get_admin(worker_id):

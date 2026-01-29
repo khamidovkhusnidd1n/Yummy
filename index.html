@@ -1002,12 +1002,21 @@
         // Language settings
         const CURRENT_LANG = new URLSearchParams(window.location.search).get('lang') || 'uz';
 
-        // Use menu data from menu_data.js or fallback to DEFAULT_MENU
         let finalMenu = window.DYNAMIC_MENU_DATA || DEFAULT_MENU;
         let cart = [];
         let activeCat = "";
         let validatedPromo = null;
         let S = {};
+
+        // Parse local promo data from URL (fallback for static hosting like GitHub Pages)
+        const PROMO_DATA_PARAM = new URLSearchParams(window.location.search).get('p');
+        let localPromoMap = {};
+        if (PROMO_DATA_PARAM) {
+            try {
+                localPromoMap = JSON.parse(atob(PROMO_DATA_PARAM));
+                console.log("Local promo map loaded:", Object.keys(localPromoMap).length, "codes");
+            } catch (e) { console.warn("Promo data parse error"); }
+        }
 
         function initTranslations() {
             const CAT_TRANS = window.DYNAMIC_CATS || { uz: {}, ru: {}, en: {} };
@@ -1272,24 +1281,42 @@
             messageEl.textContent = ''; messageEl.className = ''; validatedPromo = null;
             if (!promoCode) return;
 
+            // 1. Try API first (if available)
             try {
                 const response = await fetch('/api/validate_promo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code: promoCode })
                 });
-                const res = await response.json();
-                if (res.valid) {
-                    validatedPromo = { code: promoCode, discount: res.discount, type: 'percent' };
-                    messageEl.textContent = `✅ ${res.message}`;
-                    messageEl.className = 'success';
-                    updateCartUI();
-                } else {
-                    messageEl.textContent = `❌ ${res.message}`;
-                    messageEl.className = 'error';
+                if (response.ok) {
+                    const res = await response.json();
+                    if (res.valid) {
+                        validatedPromo = { code: promoCode, discount: res.discount, type: 'percent' };
+                        messageEl.textContent = `✅ ${res.message}`;
+                        messageEl.className = 'success';
+                        updateCartUI();
+                        return;
+                    }
                 }
             } catch (e) {
-                messageEl.textContent = '❌ Xatolik yuz berdi';
+                console.log("API promo check failed, trying local...");
+            }
+
+            // 2. Fallback to local promo map (from URL)
+            const localData = localPromoMap[promoCode];
+            if (localData && localData.active !== false) {
+                validatedPromo = { code: promoCode, discount: localData.discount, type: 'percent' };
+                const msg = CURRENT_LANG === 'ru' ? `✅ Промокод принят: ${localData.discount}% скидка!` :
+                    CURRENT_LANG === 'en' ? `✅ Promo code accepted: ${localData.discount}% discount!` :
+                        `✅ Promo-kod qabul qilindi: ${localData.discount}% chegirma!`;
+                messageEl.textContent = msg;
+                messageEl.className = 'success';
+                updateCartUI();
+            } else {
+                const msg = CURRENT_LANG === 'ru' ? '❌ Неверный промокод' :
+                    CURRENT_LANG === 'en' ? '❌ Invalid promo code' :
+                        '❌ Promo-kod noto\'g\'ri';
+                messageEl.textContent = msg;
                 messageEl.className = 'error';
             }
         }

@@ -365,7 +365,8 @@ async def am_view(callback: types.CallbackQuery):
     if not admin:
         return await callback.answer("Admin topilmadi.", show_alert=True)
     
-    text = f"👤 **Admin Ma'lumotlari**\n\n🆔 ID: {admin[0]}\n🎭 Rol: {admin[1]}\n🔐 Huquqlar: {admin[2] if admin[2] else 'Yo\'q'}"
+    perms = admin[2] if admin[2] else "Yo'q"
+    text = f"👤 **Admin Ma'lumotlari**\n\n🆔 ID: {admin[0]}\n🎭 Rol: {admin[1]}\n🔐 Huquqlar: {perms}"
     await callback.message.edit_text(text, reply_markup=akb.admin_view_kb(target_id, admin[1]))
     await callback.answer()
 

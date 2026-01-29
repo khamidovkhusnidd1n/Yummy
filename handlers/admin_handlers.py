@@ -447,7 +447,10 @@ async def admin_orders_msg(message: types.Message):
     await admin_orders_callback(FakeCallback(message))
 
 @router.message(F.text == "🍽 Menu Boshqaruvi")
-async def admin_menu_manage_msg(message: types.Message):
+async def admin_menu_manage_msg(message: types.Message, state: FSMContext):
+    # Clear any previous state to prevent conflicts
+    await state.clear()
+    
     if not db.has_permission(message.from_user.id, 'menu'):
         return await message.answer("Sizda menuni boshqarish huquqi yo'q.")
     

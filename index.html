@@ -781,7 +781,7 @@
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
-            <span>Asosiy</span>
+            <span id="nav-home">Asosiy</span>
         </button>
         <button class="nav-btn" onclick="openCart()">
             <svg viewBox="0 0 24 24">
@@ -789,7 +789,7 @@
                 <circle cx="20" cy="21" r="1" />
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            <span>Savat</span>
+            <span id="nav-cart">Savat</span>
         </button>
     </nav>
 
@@ -799,8 +799,8 @@
         <div class="sheet">
             <div class="sheet-handle"></div>
             <div class="sheet-header">
-                <h2 class="sheet-title">Savat</h2>
-                <button class="clear-btn" onclick="clearCart()">Tozalash</button>
+                <h2 class="sheet-title" id="cart-title">Savat</h2>
+                <button class="clear-btn" id="cart-clear" onclick="clearCart()">Tozalash</button>
             </div>
             <div class="cart-list" id="cartList">
                 <!-- Cart Items -->
@@ -816,17 +816,18 @@
                 </div>
                 <div id="promoMessage"></div>
                 <div class="address-container" style="margin-bottom: 20px;">
-                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-secondary);">
+                    <div id="address-label"
+                        style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-secondary);">
                         Yetkazib berish manzili:</div>
                     <textarea id="addressInput" class="promo-cart-input"
                         style="height: 80px; padding: 12px; resize: none; width: 100%; border-radius: 18px;"
                         placeholder="Shahar, ko'cha, uy raqami va mo'ljalni kiriting..."></textarea>
                 </div>
                 <div class="total-row">
-                    <span class="total-label">Jami:</span>
+                    <span class="total-label" id="total-label">Jami:</span>
                     <span class="total-val" id="totalVal">0 so'm</span>
                 </div>
-                <button class="order-btn" onclick="placeOrder()">
+                <button class="order-btn" id="confirm-btn" onclick="placeOrder()">
                     <span>Tasdiqlash</span>
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3">
                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -845,7 +846,7 @@
             </svg>
             <input type="text" class="search-input" id="searchInput" placeholder="Taom qidirish..."
                 oninput="handleSearch(this.value)">
-            <button class="clear-btn" onclick="closeSearch()">Yopish</button>
+            <button class="clear-btn" id="search-close" onclick="closeSearch()">Yopish</button>
         </div>
         <div class="menu-container" id="searchResults"></div>
     </div>
@@ -875,26 +876,30 @@
                 "Big (45sm)": "Большой (45 см)", "Canada (45sm)": "Канада (45 см)", "Super (45sm)": "Супер (45 см)",
                 "Chiz": "Сырный", "Gamburger": "Гамбургер", "Chizburger": "Чизбургер", "Double": "Дабл",
                 "Double chiz": "Дабл чиз", "Go'shtli": "С мясом", "Pishloqli tovuq": "Сырная курица",
-                "Nuggets": "Наггетсы", "Nuggets mini": "Наггетсы мини", "File strips": "Стрипсы",
-                "Qanot": "Крылышки", "Kartoshka": "Картошка фри", "Lunch box": "Ланч-бокс", "Mini": "Мини",
-                "Twins": "Твинс", "Sous": "Соус", "Yostiqchalar": "Подушечки", "Yostiqchalar mini": "Подушечки мини",
+                "Nuggets": "Наггетсы", "Naggets": "Наггетсы", "Nuggets mini": "Наггетсы мини", "Naggets mini": "Наггетсы мини",
+                "File strips": "Стрипсы", "Qanot": "Крылышки", "Kartoshka": "Картошка фри", "Lunch box": "Ланч-бокс",
+                "Mini": "Мини", "Twins": "Твинс", "Sous": "Соус", "Yostiqchalar": "Подушечки", "Yostiqchalar mini": "Подушечки мини",
                 "Choy": "Чай", "Choy mevali": "Фруктовый чай", "O'rmon mevalari": "Лесные ягоды", "Ko'k": "Синий",
                 "Kofe": "Кофе", "Kofe (Big)": "Кофе (большой)", "Moxito": "Мохито", "Tropic": "Тропик",
-                "Xot let": "Горячий латте", "Kfc xaggi": "KFC Хагги", "Kfc BURGER (+0.25 Cola)": "KFC БУРГЕР (+0.25 Кола)",
-                "Kfc HAGGI (+0.25 Cola)": "KFC ХАГГИ (+0.25 Кола)"
+                "Xot let": "Горячий латте", "Hot let": "Горячий латте", "Kfc xaggi": "KFC Хагги",
+                "Kfc BURGER (+0.25 Cola)": "KFC БУРГЕР (+0.25 Кола)", "Kfc HAGGI (+0.25 Cola)": "KFC ХАГГИ (+0.25 Кола)",
+                "MAZZA (Kichik)": "MAZZA (Маленькая)", "MAZZA (Katta)": "MAZZA (Большая)",
+                "Standart Doner": "Стандарт Донер", "Katta Doner": "Большой Донер", "Pishloqli Doner": "Сырный Донер"
             },
             en: {
                 "Standart": "Standard", "Pishloqli": "Cheese", "Big": "Big", "Big pishloq": "Big cheese",
                 "Big (45sm)": "Big (45 cm)", "Canada (45sm)": "Canada (45 cm)", "Super (45sm)": "Super (45 cm)",
                 "Chiz": "Cheese", "Gamburger": "Hamburger", "Chizburger": "Cheeseburger", "Double": "Double",
                 "Double chiz": "Double cheese", "Go'shtli": "Meat", "Pishloqli tovuq": "Cheesy chicken",
-                "Nuggets": "Nuggets", "Nuggets mini": "Nuggets mini", "File strips": "Fillet strips",
-                "Qanot": "Wings", "Kartoshka": "Fries", "Lunch box": "Lunch box", "Mini": "Mini",
-                "Twins": "Twins", "Sous": "Sauce", "Yostiqchalar": "Cheese pillows", "Yostiqchalar mini": "Mini cheese pillows",
+                "Nuggets": "Nuggets", "Naggets": "Nuggets", "Nuggets mini": "Nuggets mini", "Naggets mini": "Nuggets mini",
+                "File strips": "Fillet strips", "Qanot": "Wings", "Kartoshka": "Fries", "Lunch box": "Lunch box",
+                "Mini": "Mini", "Twins": "Twins", "Sous": "Sauce", "Yostiqchalar": "Cheese pillows", "Yostiqchalar mini": "Mini cheese pillows",
                 "Choy": "Tea", "Choy mevali": "Fruit tea", "O'rmon mevalari": "Forest berries", "Ko'k": "Blue",
                 "Kofe": "Coffee", "Kofe (Big)": "Coffee (Large)", "Moxito": "Mojito", "Tropic": "Tropical",
-                "Xot let": "Hot latte", "Kfc xaggi": "KFC Haggi", "Kfc BURGER (+0.25 Cola)": "KFC BURGER (+0.25 Cola)",
-                "Kfc HAGGI (+0.25 Cola)": "KFC HAGGI (+0.25 Cola)"
+                "Xot let": "Hot latte", "Hot let": "Hot latte", "Kfc xaggi": "KFC Haggi",
+                "Kfc BURGER (+0.25 Cola)": "KFC BURGER (+0.25 Cola)", "Kfc HAGGI (+0.25 Cola)": "KFC HAGGI (+0.25 Cola)",
+                "MAZZA (Kichik)": "MAZZA (Small)", "MAZZA (Katta)": "MAZZA (Large)",
+                "Standart Doner": "Standard Doner", "Katta Doner": "Big Doner", "Pishloqli Doner": "Cheese Doner"
             }
         };
 
@@ -962,32 +967,62 @@
         const CAT_TRANS = window.DYNAMIC_CATS || { uz: {}, ru: {}, en: {} };
 
         const LANG_STRINGS = {
-            uz: { cats: CAT_TRANS.uz || {}, search_placeholder: 'Qidirish...', cart_title: 'Savat', cart_sub: '', order_btn: 'Buyurtma berish', promo_placeholder: 'Promo kod', delivery_free: 'Yetkazib berish bepul', delivery_fee_note: 'Yetkazib berish' },
-            ru: { cats: CAT_TRANS.ru || {}, search_placeholder: 'Поиск...', cart_title: 'Корзина', cart_sub: '', order_btn: 'Заказать', promo_placeholder: 'Промокод', delivery_free: 'Доставка бесплатная', delivery_fee_note: 'Доставка' },
-            en: { cats: CAT_TRANS.en || {}, search_placeholder: 'Search...', cart_title: 'Cart', cart_sub: '', order_btn: 'Order', promo_placeholder: 'Promo code', delivery_free: 'Free delivery', delivery_fee_note: 'Delivery' }
+            uz: {
+                cats: CAT_TRANS.uz || {}, search_placeholder: 'Taom qidirish...',
+                cart_title: 'Savat', cart_clear: 'Tozalash', cart_empty: 'Savat bo\'sh',
+                promo_placeholder: 'Promo kod (agar bo\'lsa)', address_label: 'Yetkazib berish manzili:',
+                address_placeholder: 'Shahar, ko\'cha, uy raqami va mo\'ljalni kiriting...',
+                total_label: 'Jami:', confirm_btn: 'Tasdiqlash', nav_home: 'Asosiy', nav_cart: 'Savat',
+                search_close: 'Yopish', toast_added: 'Savatga qo\'shildi!',
+                delivery_free: 'Yetkazib berish bepul', delivery_placeholder: 'Taom qidirish...'
+            },
+            ru: {
+                cats: CAT_TRANS.ru || {}, search_placeholder: 'Поиск блюд...',
+                cart_title: 'Корзина', cart_clear: 'Очистить', cart_empty: 'Корзина пуста',
+                promo_placeholder: 'Промокод (если есть)', address_label: 'Адрес доставки:',
+                address_placeholder: 'Введите город, улицу, номер дома и ориентир...',
+                total_label: 'Итого:', confirm_btn: 'Подтвердить', nav_home: 'Главная', nav_cart: 'Корзина',
+                search_close: 'Закрыть', toast_added: 'Добавлено в корзину!',
+                delivery_free: 'Бесплатная доставка', delivery_placeholder: 'Поиск блюд...'
+            },
+            en: {
+                cats: CAT_TRANS.en || {}, search_placeholder: 'Search for food...',
+                cart_title: 'Cart', cart_clear: 'Clear', cart_empty: 'Cart is empty',
+                promo_placeholder: 'Promo code (if any)', address_label: 'Delivery address:',
+                address_placeholder: 'Enter city, street, house number and landmark...',
+                total_label: 'Total:', confirm_btn: 'Confirm', nav_home: 'Home', nav_cart: 'Cart',
+                search_close: 'Close', toast_added: 'Added to cart!',
+                delivery_free: 'Free delivery', delivery_placeholder: 'Search for food...'
+            }
         };
         const S = LANG_STRINGS[CURRENT_LANG] || LANG_STRINGS['uz'];
-        const BASE_DELIVERY_FEE = 5000;
-        const DELIVERY_THRESHOLD = 50000;  // 50,000 so'mdan yuqori = bepul yetkazib berish
 
-        // Apply translations to static elements (guarded)
-        const _si = safeGetById('search-input');
-        if (_si) _si.placeholder = S.search_placeholder;
-        const _ct = safeGetById('cart-title');
-        if (_ct) _ct.innerText = S.cart_title;
-        const _cs = safeGetById('cart-sub');
-        if (_cs) _cs.innerText = S.cart_sub;
-        const _cb = safeGetById('checkout-btn');
-        if (_cb) {
-            const _span = _cb.querySelector('span');
-            if (_span) _span.innerText = S.order_btn;
-        }
-        const _pi = safeGetById('promo-input');
-        if (_pi) _pi.placeholder = S.promo_placeholder;
+        // Apply translations to static elements
+        const applyText = (id, text, isPlaceholder = false) => {
+            const el = safeGetById(id);
+            if (!el) return;
+            if (isPlaceholder) el.placeholder = text;
+            else {
+                const subSpan = el.querySelector('span');
+                if (subSpan) subSpan.innerText = text;
+                else el.innerText = text;
+            }
+        };
 
-        const searchResultsHeader = safeGetById('search-results-header');
-        const searchFilters = safeGetById('search-filters');
-        const searchResultCount = safeGetById('search-result-count');
+        applyText('searchInput', S.search_placeholder, true);
+        applyText('search-close', S.search_close);
+        applyText('nav-home', S.nav_home);
+        applyText('nav-cart', S.nav_cart);
+        applyText('cart-title', S.cart_title);
+        applyText('cart-clear', S.cart_clear);
+        applyText('promoInput', S.promo_placeholder, true);
+        applyText('address-label', S.address_label);
+        applyText('addressInput', S.address_placeholder, true);
+        applyText('total-label', S.total_label);
+        applyText('confirm-btn', S.confirm_btn);
+
+        const toastEl = safeGetById('toast');
+        if (toastEl) toastEl.innerText = S.toast_added;
 
         // MENU_DATA is loaded from menu_data.js
 
@@ -1085,7 +1120,7 @@
                 const items = finalMenu[cat] || [];
                 return `
                     <div class="category-block" id="cat-section-${idx}">
-                        <div class="category-header"><span class="cat-name">${cat}</span></div>
+                        <div class="category-header"><span class="cat-name">${translate(cat, 'cat')}</span></div>
                         <div class="products-grid">
                             ${items.map(item => `
                                 <div class="product-card">
@@ -1096,7 +1131,7 @@
                                         </button>
                                     </div>
                                     <div class="item-info">
-                                        <div class="item-name">${item.n || "Noma'lum"}</div>
+                                        <div class="item-name">${translate(item.n, 'item') || "Noma'lum"}</div>
                                         <div class="item-price">${(item.p || 0).toLocaleString()} so'm</div>
                                     </div>
                                 </div>
@@ -1132,13 +1167,13 @@
             const list = document.getElementById('cartList');
             if (list) {
                 if (cart.length === 0) {
-                    list.innerHTML = `<div style="text-align:center; padding:40px; color:#999">Savat bo'sh</div>`;
+                    list.innerHTML = `<div style="text-align:center; padding:40px; color:#999">${S.cart_empty}</div>`;
                 } else {
                     list.innerHTML = cart.map((item, idx) => `
                         <div class="cart-item">
                             <img src="${item.i || 'images/burger.png'}" class="cart-item-img" onerror="this.src='images/burger.png'">
                             <div class="cart-item-info">
-                                <div class="cart-item-name">${item.n}</div>
+                                <div class="cart-item-name">${translate(item.n, 'item')}</div>
                                 <div class="cart-item-price">${(item.p || 0).toLocaleString()} so'm</div>
                             </div>
                             <div class="qty-controls">
@@ -1179,7 +1214,7 @@
             // Update UI with search results (simplified for now)
             results.innerHTML = matches.map(item => `
                 <div class="product-card" style="margin-bottom:10px">
-                    <div class="item-name">${item.n}</div>
+                    <div class="item-name">${translate(item.n, 'item')}</div>
                     <div class="item-price">${item.p.toLocaleString()} so'm</div>
                     <button onclick="addToCart('${item.n.replace(/'/g, "\\'")}', ${item.p}, '${item.i}')" style="background:var(--accent); color:white; border:none; padding:5px 10px; border-radius:5px; margin-top:5px">Qo'shish</button>
                 </div>

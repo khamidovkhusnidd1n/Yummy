@@ -38,28 +38,45 @@
 
         :root {
             --bg-primary: #ffffff;
-            --bg-secondary: #f6f8fa;
+            --bg-secondary: #f8fafc;
             --bg-card: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --accent: #ff3b30;
-            --accent-gradient: linear-gradient(135deg, #ff3b30 0%, #ff6b5b 100%);
-            --border: #edf2f7;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
-            --radius-lg: 24px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent: #ff4d4d;
+            --accent-gradient: linear-gradient(135deg, #ff4d4d 0%, #f43f5e 100%);
+            --accent-soft: rgba(255, 77, 77, 0.1);
+            --border: #f1f5f9;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        .dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #020617;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border: #334155;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --glass: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Outfit', sans-serif;
             background: var(--bg-secondary);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* Header */
@@ -69,24 +86,25 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 12px 16px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .header.scrolled {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            box-shadow: var(--shadow);
         }
 
         .header.scrolled .logo-text {
-            font-size: 24px;
+            font-size: 28px;
         }
 
         .logo {
@@ -96,29 +114,31 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: var(--accent-gradient);
-            border-radius: 12px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+            box-shadow: 0 8px 16px rgba(255, 77, 77, 0.3);
+            transform: rotate(-5deg);
         }
 
         .logo-icon svg {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
         .logo-text {
             font-family: 'Pacifico', cursive;
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 400;
-            color: #ff0000;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(255, 0, 0, 0.3);
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            text-shadow: 3px 3px 0px var(--accent-soft);
         }
 
         .header-actions {
@@ -130,14 +150,14 @@
         .header-btn {
             width: 44px;
             height: 44px;
-            border-radius: 14px;
-            border: none;
+            border-radius: 16px;
+            border: 1px solid var(--border);
             background: var(--bg-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow);
             position: relative;
         }
@@ -227,12 +247,14 @@
         /* Categories Bar */
         .categories-section {
             position: sticky;
-            top: 68px;
+            top: 76px;
             z-index: 90;
-            background: rgba(246, 248, 250, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
         }
 
         .categories-scroll {
@@ -248,25 +270,26 @@
 
         .category-item {
             flex: 0 0 auto;
-            padding: 10px 18px;
+            padding: 12px 20px;
             background: var(--bg-primary);
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
             font-weight: 700;
             font-size: 14px;
-            color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-secondary);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .category-item.active {
-            background: var(--accent);
+            background: var(--accent-gradient);
             color: white;
-            border-color: var(--accent);
-            box-shadow: 0 6px 15px rgba(255, 59, 48, 0.2);
-            transform: translateY(-2px);
+            border-color: transparent;
+            box-shadow: 0 10px 20px -5px rgba(255, 77, 77, 0.4);
+            transform: translateY(-3px) scale(1.02);
         }
 
         /* Products Grid */
@@ -305,15 +328,21 @@
         .product-card {
             background: var(--bg-card);
             border-radius: var(--radius-lg);
-            padding: 12px;
+            padding: 14px;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            transition: all 0.3s ease;
+            gap: 14px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            animation: cardIn 0.5s ease backwards;
+            animation: cardIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-soft);
         }
 
         @keyframes cardIn {
@@ -354,27 +383,33 @@
 
         .add-btn-fab {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            background: var(--bg-primary);
-            border: none;
+            bottom: 10px;
+            right: 10px;
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             color: var(--accent);
             cursor: pointer;
             z-index: 5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .add-btn-fab:active {
+            transform: scale(0.85);
         }
 
         .add-btn-fab svg {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             stroke: currentColor;
-            stroke-width: 3;
+            stroke-width: 3.5;
         }
 
         .item-info {
@@ -420,31 +455,35 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
             border: none;
             background: transparent;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             font-weight: 700;
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-radius: 16px;
+            letter-spacing: 0.8px;
+            border-radius: 20px;
+            padding: 8px 20px;
+            transition: all 0.3s ease;
         }
 
         .nav-btn.active {
-            background: #fff0ef;
             color: var(--accent);
+            background: var(--accent-soft);
         }
 
         .nav-btn svg {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             stroke: currentColor;
             stroke-width: 2;
             fill: none;
+            transition: transform 0.3s ease;
         }
 
         .nav-btn.active svg {
+            transform: translateY(-2px);
             stroke-width: 2.5;
         }
 
@@ -963,79 +1002,76 @@
         // Language settings
         const CURRENT_LANG = new URLSearchParams(window.location.search).get('lang') || 'uz';
 
-        // Get category translations from menu_data.js
-        const CAT_TRANS = window.DYNAMIC_CATS || { uz: {}, ru: {}, en: {} };
-
-        const LANG_STRINGS = {
-            uz: {
-                cats: CAT_TRANS.uz || {}, search_placeholder: 'Taom qidirish...',
-                cart_title: 'Savat', cart_clear: 'Tozalash', cart_empty: 'Savat bo\'sh',
-                promo_placeholder: 'Promo kod (agar bo\'lsa)', address_label: 'Yetkazib berish manzili:',
-                address_placeholder: 'Shahar, ko\'cha, uy raqami va mo\'ljalni kiriting...',
-                total_label: 'Jami:', confirm_btn: 'Tasdiqlash', nav_home: 'Asosiy', nav_cart: 'Savat',
-                search_close: 'Yopish', toast_added: 'Savatga qo\'shildi!',
-                delivery_free: 'Yetkazib berish bepul', delivery_placeholder: 'Taom qidirish...'
-            },
-            ru: {
-                cats: CAT_TRANS.ru || {}, search_placeholder: 'Поиск блюд...',
-                cart_title: 'Корзина', cart_clear: 'Очистить', cart_empty: 'Корзина пуста',
-                promo_placeholder: 'Промокод (если есть)', address_label: 'Адрес доставки:',
-                address_placeholder: 'Введите город, улицу, номер дома и ориентир...',
-                total_label: 'Итого:', confirm_btn: 'Подтвердить', nav_home: 'Главная', nav_cart: 'Корзина',
-                search_close: 'Закрыть', toast_added: 'Добавлено в корзину!',
-                delivery_free: 'Бесплатная доставка', delivery_placeholder: 'Поиск блюд...'
-            },
-            en: {
-                cats: CAT_TRANS.en || {}, search_placeholder: 'Search for food...',
-                cart_title: 'Cart', cart_clear: 'Clear', cart_empty: 'Cart is empty',
-                promo_placeholder: 'Promo code (if any)', address_label: 'Delivery address:',
-                address_placeholder: 'Enter city, street, house number and landmark...',
-                total_label: 'Total:', confirm_btn: 'Confirm', nav_home: 'Home', nav_cart: 'Cart',
-                search_close: 'Close', toast_added: 'Added to cart!',
-                delivery_free: 'Free delivery', delivery_placeholder: 'Search for food...'
-            }
-        };
-        const S = LANG_STRINGS[CURRENT_LANG] || LANG_STRINGS['uz'];
-
-        // Apply translations to static elements
-        const applyText = (id, text, isPlaceholder = false) => {
-            const el = safeGetById(id);
-            if (!el) return;
-            if (isPlaceholder) el.placeholder = text;
-            else {
-                const subSpan = el.querySelector('span');
-                if (subSpan) subSpan.innerText = text;
-                else el.innerText = text;
-            }
-        };
-
-        applyText('searchInput', S.search_placeholder, true);
-        applyText('search-close', S.search_close);
-        applyText('nav-home', S.nav_home);
-        applyText('nav-cart', S.nav_cart);
-        applyText('cart-title', S.cart_title);
-        applyText('cart-clear', S.cart_clear);
-        applyText('promoInput', S.promo_placeholder, true);
-        applyText('address-label', S.address_label);
-        applyText('addressInput', S.address_placeholder, true);
-        applyText('total-label', S.total_label);
-        applyText('confirm-btn', S.confirm_btn);
-
-        const toastEl = safeGetById('toast');
-        if (toastEl) toastEl.innerText = S.toast_added;
-
-        // MENU_DATA is loaded from menu_data.js
-
-        // --- DYNAMIC DATA INTEGRATION ---
-
         // Use menu data from menu_data.js or fallback to DEFAULT_MENU
         let finalMenu = window.DYNAMIC_MENU_DATA || DEFAULT_MENU;
         let cart = [];
         let activeCat = "";
         let validatedPromo = null;
+        let S = {};
+
+        function initTranslations() {
+            const CAT_TRANS = window.DYNAMIC_CATS || { uz: {}, ru: {}, en: {} };
+            const LANG_STRINGS = {
+                uz: {
+                    cats: CAT_TRANS.uz || {}, search_placeholder: 'Taom qidirish...',
+                    cart_title: 'Savat', cart_clear: 'Tozalash', cart_empty: 'Savat bo\'sh',
+                    promo_placeholder: 'Promo kod (agar bo\'lsa)', address_label: 'Yetkazib berish manzili:',
+                    address_placeholder: 'Shahar, ko\'cha, uy raqami va mo\'ljalni kiriting...',
+                    total_label: 'Jami:', confirm_btn: 'Tasdiqlash', nav_home: 'Asosiy', nav_cart: 'Savat',
+                    search_close: 'Yopish', toast_added: 'Savatga qo\'shildi!',
+                    delivery_free: 'Yetkazib berish bepul', delivery_placeholder: 'Taom qidirish...'
+                },
+                ru: {
+                    cats: CAT_TRANS.ru || {}, search_placeholder: 'Поиск блюд...',
+                    cart_title: 'Корзина', cart_clear: 'Очистить', cart_empty: 'Корзина пуста',
+                    promo_placeholder: 'Промокод (если есть)', address_label: 'Адрес доставки:',
+                    address_placeholder: 'Введите город, улицу, номер дома и ориентир...',
+                    total_label: 'Итого:', confirm_btn: 'Подтвердить', nav_home: 'Главная', nav_cart: 'Корзина',
+                    search_close: 'Закрыть', toast_added: 'Добавлено в корзину!',
+                    delivery_free: 'Бесплатная доставка', delivery_placeholder: 'Поиск блюд...'
+                },
+                en: {
+                    cats: CAT_TRANS.en || {}, search_placeholder: 'Search for food...',
+                    cart_title: 'Cart', cart_clear: 'Clear', cart_empty: 'Cart is empty',
+                    promo_placeholder: 'Promo code (if any)', address_label: 'Delivery address:',
+                    address_placeholder: 'Enter city, street, house number and landmark...',
+                    total_label: 'Total:', confirm_btn: 'Confirm', nav_home: 'Home', nav_cart: 'Cart',
+                    search_close: 'Close', toast_added: 'Added to cart!',
+                    delivery_free: 'Free delivery', delivery_placeholder: 'Search for food...'
+                }
+            };
+            S = LANG_STRINGS[CURRENT_LANG] || LANG_STRINGS['uz'];
+
+            const applyText = (id, text, isPlaceholder = false) => {
+                const el = safeGetById(id);
+                if (!el) return;
+                if (isPlaceholder) el.placeholder = text;
+                else {
+                    const subSpan = el.querySelector('span');
+                    if (subSpan) subSpan.innerText = text;
+                    else el.innerText = text;
+                }
+            };
+
+            applyText('searchInput', S.search_placeholder, true);
+            applyText('search-close', S.search_close);
+            applyText('nav-home', S.nav_home);
+            applyText('nav-cart', S.nav_cart);
+            applyText('cart-title', S.cart_title);
+            applyText('cart-clear', S.cart_clear);
+            applyText('promoInput', S.promo_placeholder, true);
+            applyText('address-label', S.address_label);
+            applyText('addressInput', S.address_placeholder, true);
+            applyText('total-label', S.total_label);
+            applyText('confirm-btn', S.confirm_btn);
+
+            const toastEl = safeGetById('toast');
+            if (toastEl) toastEl.innerText = S.toast_added;
+        }
 
         // Wait for DOM to be ready, then render
         document.addEventListener('DOMContentLoaded', function () {
+            initTranslations();
             // Re-check if DYNAMIC_MENU_DATA loaded
             if (window.DYNAMIC_MENU_DATA && Object.keys(window.DYNAMIC_MENU_DATA).length > 0) {
                 finalMenu = window.DYNAMIC_MENU_DATA;
@@ -1066,7 +1102,10 @@
 
 
         function translate(key, type = 'item') {
-            if (type === 'cat') return S.cats[key] || key;
+            if (type === 'cat') {
+                const catDict = (window.DYNAMIC_CATS && window.DYNAMIC_CATS[CURRENT_LANG]) || {};
+                return catDict[key] || key;
+            }
             const dict = ITEM_NAMES[CURRENT_LANG] || {};
             const cleanKey = String(key).trim();
             return dict[cleanKey] || cleanKey;

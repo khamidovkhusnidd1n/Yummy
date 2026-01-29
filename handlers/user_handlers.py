@@ -41,8 +41,8 @@ async def set_language(callback: types.CallbackQuery):
     
     is_admin = (user_id in (SUPER_ADMINS + WORKERS)) and bool(db.get_admin(user_id))
     s = STRINGS[lang]
-    await callback.message.edit_text(s['welcome'].format(name=callback.from_user.full_name))
-    await callback.message.answer(".", reply_markup=kb.main_menu(lang, is_admin))
+    await callback.message.delete()
+    await callback.message.answer(s['welcome'].format(name=callback.from_user.full_name), reply_markup=kb.main_menu(lang, is_admin), parse_mode="Markdown")
     await callback.answer()
 
 from keyboards import admin_keyboards as akb

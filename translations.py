@@ -1,8 +1,8 @@
 ﻿STRINGS = {
     'uz': {
-        'welcome': "Xush kelibsiz {name}!\nYummy botga xush kelibsiz.",
+        'welcome': "Xush kelibsiz {name}!\n\nTaomlarimizni ko'rish va buyurtma berish uchun pastdagi **🍽 Buyurtma berish** tugmasini bosing.",
         'select_lang': "Iltimos, tilni tanlang:",
-        'main_menu_btn': "🚀 Yummy App",
+        'main_menu_btn': "🍽 Buyurtma berish",
         'phone_req': "Telefon raqamingizni yuboring:",
         'phone_btn': "📞 Telefon raqamni yuborish",
         'location_req': "Iltimos, manzilingizni yozma ravishda kiriting (Masalan: Yangiyo'l, Saxrniy Havas yonida):",
@@ -44,9 +44,9 @@
         'webapp_total': "Jami:",
     },
     'ru': {
-        'welcome': "Добро пожаловать, {name}!\nДобро пожаловать в Yummy bot.",
+        'welcome': "Добро пожаловать, {name}!\n\nЧтобы посмотреть меню и сделать заказ, нажмите на кнопку **🍽 Заказать** ниже.",
         'select_lang': "Пожалуйста, выберите язык:",
-        'main_menu_btn': "🚀 Yummy App",
+        'main_menu_btn': "🍽 Заказать",
         'phone_req': "Отправьте ваш номер телефона:",
         'phone_btn': "📞 Отправить номер телефона",
         'location_req': "Пожалуйста, введите ваш адрес текстом (Например: Янгиюль, рядом с Saxrniy Havas):",
@@ -88,9 +88,9 @@
         'webapp_total': "Итого:",
     },
     'en': {
-        'welcome': "Welcome {name}!\nWelcome to Yummy bot.",
+        'welcome': "Welcome {name}!\n\nTo view our menu and place an order, click the **🍽 Order Now** button below.",
         'select_lang': "Please select a language:",
-        'main_menu_btn': "🚀 Yummy App",
+        'main_menu_btn': "🍽 Order Now",
         'phone_req': "Send your phone number:",
         'phone_btn': "📞 Send phone number",
         'location_req': "Please enter your address manually (Example: Yangiyul, near Saxrniy Havas):",

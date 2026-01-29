@@ -1,4 +1,4 @@
-﻿<!-- Global Build: 2026-01-29 10:07 -->
+<!-- Global Build: 2026-01-29 10:07 -->
 <!DOCTYPE html>
 <html lang="uz">
 
@@ -822,7 +822,7 @@
             <div class="promo-card" onclick="addToCart('MAZZA', 15000, 'images/promo_mazza.jpg')">
                 <img src="images/promo_mazza.jpg" class="promo-full-img" alt="Mazza Promo">
             </div>
-            <div class="promo-card" onclick="selectCat('🔥 Specials')">
+            <div class="promo-card" onclick="selectCat('?? Specials')">
                 <img src="images/promo_kfc.jpg" class="promo-full-img" alt="KFC Promo">
             </div>
         </div>
@@ -877,7 +877,7 @@
                         onkeyup="handlePromoKeyup(event)">
                     <button class="order-btn" id="promoCheckBtn" onclick="checkPromo()"
                         style="flex: 0 0 auto; width: auto; height: 48px; padding: 0 20px; font-size: 14px; gap: 6px;">
-                        ✓
+                        ?
                     </button>
                 </div>
                 <div id="promoMessage"></div>
@@ -926,31 +926,31 @@
 
         // 1. Data Definitions
         const DEFAULT_MENU = {
-            "🌯 Lavash": [
-                { "n": "Standart", "p": 30000, "i": "images/lavash.png" },
-                { "n": "Pishloqli", "p": 35000, "i": "images/image2/images3/lavash_cheese.png" }
+            "?? Lavash": [
+                { "n": "Standart", "p": 30000, "i": "images/lavash.jpg" },
+                { "n": "Pishloqli", "p": 35000, "i": "images/image2/images3/lavash_cheese.jpg" }
             ],
-            "🍔 Burger": [
-                { "n": "Gamburger", "p": 28000, "i": "images/burger.png" },
-                { "n": "Chizburger", "p": 33000, "i": "images/image2/images3/cheeseburger.png" }
+            "?? Burger": [
+                { "n": "Gamburger", "p": 28000, "i": "images/burger.jpg" },
+                { "n": "Chizburger", "p": 33000, "i": "images/image2/images3/cheeseburger.jpg" }
             ]
         };
 
         const ITEM_NAMES = {
             ru: {
-                "Standart": "Стандарт", "Pishloqli": "С сыром", "Big": "Большой", "Big pishloq": "Большой с сыром",
-                "Big (45sm)": "Большой (45 см)", "Canada (45sm)": "Канада (45 см)", "Super (45sm)": "Супер (45 см)",
-                "Chiz": "Сырный", "Gamburger": "Гамбургер", "Chizburger": "Чизбургер", "Double": "Дабл",
-                "Double chiz": "Дабл чиз", "Go'shtli": "С мясом", "Pishloqli tovuq": "Сырная курица",
-                "Nuggets": "Наггетсы", "Naggets": "Наггетсы", "Nuggets mini": "Наггетсы мини", "Naggets mini": "Наггетсы мини",
-                "File strips": "Стрипсы", "Qanot": "Крылышки", "Kartoshka": "Картошка фри", "Lunch box": "Ланч-бокс",
-                "Mini": "Мини", "Twins": "Твинс", "Sous": "Соус", "Yostiqchalar": "Подушечки", "Yostiqchalar mini": "Подушечки мини",
-                "Choy": "Чай", "Choy mevali": "Фруктовый чай", "O'rmon mevalari": "Лесные ягоды", "Ko'k": "Синий",
-                "Kofe": "Кофе", "Kofe (Big)": "Кофе (большой)", "Moxito": "Мохито", "Tropic": "Тропик",
-                "Xot let": "Горячий латте", "Hot let": "Горячий латте", "Kfc xaggi": "KFC Хагги",
-                "Kfc BURGER (+0.25 Cola)": "KFC БУРГЕР (+0.25 Кола)", "Kfc HAGGI (+0.25 Cola)": "KFC ХАГГИ (+0.25 Кола)",
-                "MAZZA (Kichik)": "MAZZA (Маленькая)", "MAZZA (Katta)": "MAZZA (Большая)",
-                "Standart Doner": "Стандарт Донер", "Katta Doner": "Большой Донер", "Pishloqli Doner": "Сырный Донер"
+                "Standart": "????????", "Pishloqli": "? ?????", "Big": "???????", "Big pishloq": "??????? ? ?????",
+                "Big (45sm)": "??????? (45 ??)", "Canada (45sm)": "?????? (45 ??)", "Super (45sm)": "????? (45 ??)",
+                "Chiz": "??????", "Gamburger": "?????????", "Chizburger": "?????????", "Double": "????",
+                "Double chiz": "???? ???", "Go'shtli": "? ?????", "Pishloqli tovuq": "?????? ??????",
+                "Nuggets": "????????", "Naggets": "????????", "Nuggets mini": "???????? ????", "Naggets mini": "???????? ????",
+                "File strips": "???????", "Qanot": "????????", "Kartoshka": "???????? ???", "Lunch box": "????-????",
+                "Mini": "????", "Twins": "?????", "Sous": "????", "Yostiqchalar": "?????????", "Yostiqchalar mini": "????????? ????",
+                "Choy": "???", "Choy mevali": "????????? ???", "O'rmon mevalari": "?????? ?????", "Ko'k": "?????",
+                "Kofe": "????", "Kofe (Big)": "???? (???????)", "Moxito": "??????", "Tropic": "??????",
+                "Xot let": "??????? ?????", "Hot let": "??????? ?????", "Kfc xaggi": "KFC ?????",
+                "Kfc BURGER (+0.25 Cola)": "KFC ?????? (+0.25 ????)", "Kfc HAGGI (+0.25 Cola)": "KFC ????? (+0.25 ????)",
+                "MAZZA (Kichik)": "MAZZA (?????????)", "MAZZA (Katta)": "MAZZA (???????)",
+                "Standart Doner": "???????? ?????", "Katta Doner": "??????? ?????", "Pishloqli Doner": "?????? ?????"
             },
             en: {
                 "Standart": "Standard", "Pishloqli": "Cheese", "Big": "Big", "Big pishloq": "Big cheese",
@@ -974,7 +974,7 @@
                 id: 'promo_kfc_combo',
                 name: 'Kfc BURGER',
                 price: 33000,
-                image: 'images/image2/kfc_burger.png',
+                image: 'images/image2/kfc_burger.jpg',
                 badge: 'Combo',
                 label: 'Kfc BURGER',
                 subtext: "33 000 so'm",
@@ -1058,13 +1058,13 @@
                     delivery_free: 'Yetkazib berish bepul', delivery_placeholder: 'Taom qidirish...'
                 },
                 ru: {
-                    cats: CAT_TRANS.ru || {}, search_placeholder: 'Поиск блюд...',
-                    cart_title: 'Корзина', cart_clear: 'Очистить', cart_empty: 'Корзина пуста',
-                    promo_placeholder: 'Промокод (если есть)', address_label: 'Адрес доставки:',
-                    address_placeholder: 'Введите город, улицу, номер дома и ориентир...',
-                    total_label: 'Итого:', confirm_btn: 'Подтвердить', nav_home: 'Главная', nav_cart: 'Корзина',
-                    search_close: 'Закрыть', toast_added: 'Добавлено в корзину!',
-                    delivery_free: 'Бесплатная доставка', delivery_placeholder: 'Поиск блюд...'
+                    cats: CAT_TRANS.ru || {}, search_placeholder: '????? ????...',
+                    cart_title: '???????', cart_clear: '????????', cart_empty: '??????? ?????',
+                    promo_placeholder: '???????? (???? ????)', address_label: '????? ????????:',
+                    address_placeholder: '??????? ?????, ?????, ????? ???? ? ????????...',
+                    total_label: '?????:', confirm_btn: '???????????', nav_home: '???????', nav_cart: '???????',
+                    search_close: '???????', toast_added: '????????? ? ???????!',
+                    delivery_free: '?????????? ????????', delivery_placeholder: '????? ????...'
                 },
                 en: {
                     cats: CAT_TRANS.en || {}, search_placeholder: 'Search for food...',
@@ -1201,7 +1201,7 @@
                                 <div class="product-card">
                                     <div class="img-wrapper">
                                         <div class="badge-qty" data-item-n="${(item.n || "").replace(/'/g, "\\'")}">${cart.find(x => x.n === item.n)?.qty || 0}</div>
-                                        <img src="${item.i || 'images/burger.png'}" class="item-img" onerror="this.src='images/burger.png'">
+                                        <img src="${item.i || 'images/burger.jpg'}" class="item-img" onerror="this.src='images/burger.jpg'">
                                         <button class="add-btn-fab" onclick="addToCart('${(item.n || "").replace(/'/g, "\\'")}', ${item.p || 0}, '${item.i || ""}')">
                                             <svg fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3"/></svg>
                                         </button>
@@ -1247,7 +1247,7 @@
                 } else {
                     list.innerHTML = cart.map((item, idx) => `
                         <div class="cart-item">
-                            <img src="${item.i || 'images/burger.png'}" class="cart-item-img" onerror="this.src='images/burger.png'">
+                            <img src="${item.i || 'images/burger.jpg'}" class="cart-item-img" onerror="this.src='images/burger.jpg'">
                             <div class="cart-item-info">
                                 <div class="cart-item-name">${translate(item.n, 'item')}</div>
                                 <div class="cart-item-price">${(item.p || 0).toLocaleString()} so'm</div>
@@ -1331,7 +1331,7 @@
                     const res = await response.json();
                     if (res.valid) {
                         validatedPromo = { code: promoCode, discount: res.discount, type: 'percent' };
-                        messageEl.textContent = `✅ ${res.message}`;
+                        messageEl.textContent = `? ${res.message}`;
                         messageEl.className = 'success';
                         updateCartUI();
                         return;
@@ -1345,16 +1345,16 @@
             const localData = localPromoMap[promoCode];
             if (localData && localData.active !== false) {
                 validatedPromo = { code: promoCode, discount: localData.discount, type: 'percent' };
-                const msg = CURRENT_LANG === 'ru' ? `✅ Промокод принят: ${localData.discount}% скидка!` :
-                    CURRENT_LANG === 'en' ? `✅ Promo code accepted: ${localData.discount}% discount!` :
-                        `✅ Promo-kod qabul qilindi: ${localData.discount}% chegirma!`;
+                const msg = CURRENT_LANG === 'ru' ? `? ???????? ??????: ${localData.discount}% ??????!` :
+                    CURRENT_LANG === 'en' ? `? Promo code accepted: ${localData.discount}% discount!` :
+                        `? Promo-kod qabul qilindi: ${localData.discount}% chegirma!`;
                 messageEl.textContent = msg;
                 messageEl.className = 'success';
                 updateCartUI();
             } else {
-                const msg = CURRENT_LANG === 'ru' ? '❌ Неверный промокод' :
-                    CURRENT_LANG === 'en' ? '❌ Invalid promo code' :
-                        '❌ Promo-kod noto\'g\'ri';
+                const msg = CURRENT_LANG === 'ru' ? '? ???????? ????????' :
+                    CURRENT_LANG === 'en' ? '? Invalid promo code' :
+                        '? Promo-kod noto\'g\'ri';
                 messageEl.textContent = msg;
                 messageEl.className = 'error';
             }

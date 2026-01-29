@@ -22,6 +22,15 @@ class OrderState(StatesGroup):
 
 @router.message(CommandStart())
 async def cmd_start(message: types.Message):
+    # Auto-initialize menu if empty (critical for first run)
+    if not db.get_all_categories():
+        try:
+            from init_menu import init_menu
+            init_menu()
+            print("Menu initialized via /start command")
+        except Exception as e:
+            print(f"Menu init failed: {e}")
+    
     await message.answer("🇺🇿 Iltimos, tilni tanlang:\n🇷🇺 Пожалуйста, выберите язык:\n🇺🇸 Please select a language:", reply_markup=kb.lang_keyboard())
 
 @router.callback_query(F.data.startswith("lang_"))

@@ -200,7 +200,11 @@ async def process_confirm(message: types.Message, state: FSMContext):
         method_str = "🛵 Kuryer orqali" if data.get('method') == 'delivery' else "🏃 O'zi boradi (Self-pickup)"
         admin_msg += f"🛒 Usul: {method_str}\n"
         
-        admin_msg += f"📍 Manzil: {final_location}\n\n"
+        location_display = final_location
+        if data.get('maps_url'):
+            location_display = f"[{final_location}]({data['maps_url']})"
+            
+        admin_msg += f"📍 Manzil: {location_display}\n\n"
         admin_msg += f"🧾 Taomlar:\n{data['items_str']}\n\n"
         admin_msg += f"💰 Jami: {data['total_price']:,} so'm"
 
@@ -244,9 +248,19 @@ async def web_app_data_handler(message: types.Message, state: FSMContext):
             discount_percent=discount_percent
         )
         
-        # Save address from WebApp
-        if data.get('address'):
-            await state.update_data(location=data.get('address'), maps_url=data.get('address'))
+        # Save address and coordinates from WebApp
+        location_str = data.get('address', '')
+        coords = data.get('coords')
+        maps_url = None
+        
+        if coords:
+            lat, lng = coords.get('lat'), coords.get('lng')
+            maps_url = f"https://www.google.com/maps?q={lat},{lng}"
+            
+        await state.update_data(
+            location=location_str,
+            maps_url=maps_url
+        )
 
         await state.set_state(OrderState.phone)
         await message.answer(s['phone_req'], reply_markup=kb.phone_keyboard(lang))

@@ -890,27 +890,16 @@
                     </button>
                 </div>
                 <div id="promoMessage"></div>
-                <div class="address-container" style="margin-bottom: 20px;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <div id="address-label"
-                            style="font-size: 13px; font-weight: 700; color: var(--text-secondary);">
-                            Yetkazib berish manzili:</div>
-                        <button onclick="toggleMap()"
-                            style="background: var(--accent-soft); color: var(--accent); border: none; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                <circle cx="12" cy="10" r="3" />
-                            </svg>
-                            <span id="map-btn-text">Kartadan tanlash</span>
-                        </button>
-                    </div>
+                <div class="address-container" style="margin-bottom: 15px;">
+                    <div id="address-label"
+                        style="font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-secondary);">
+                        Yetkazib berish manzili:</div>
                     <div id="mapContainer"
-                        style="height: 0; overflow: hidden; transition: all 0.3s ease; margin-bottom: 10px; border-radius: 18px; border: 1px solid var(--border);">
-                        <div id="map" style="height: 250px; width: 100%;"></div>
+                        style="height: 180px; margin-bottom: 10px; border-radius: 18px; border: 1px solid var(--border); overflow: hidden;">
+                        <div id="map" style="height: 100%; width: 100%;"></div>
                     </div>
                     <textarea id="addressInput" class="promo-cart-input"
-                        style="height: 80px; padding: 12px; resize: none; width: 100%; border-radius: 18px;"
+                        style="height: 60px; padding: 10px; resize: none; width: 100%; border-radius: 15px; font-size: 13px;"
                         placeholder="Shahar, ko'cha, uy raqami va mo'ljalni kiriting..."></textarea>
                 </div>
                 <div class="total-row">
@@ -1309,7 +1298,12 @@
         }
 
         function clearCart() { cart = []; updateCartUI(); }
-        function openCart() { document.getElementById('cartModal').classList.add('open'); }
+        function openCart() {
+            document.getElementById('cartModal').classList.add('open');
+            setTimeout(() => {
+                initMap();
+            }, 400);
+        }
         function closeCart() { document.getElementById('cartModal').classList.remove('open'); }
         function openSearch() { document.getElementById('searchModal').classList.add('open'); document.getElementById('searchInput')?.focus(); }
         function closeSearch() { document.getElementById('searchModal').classList.remove('open'); }
@@ -1401,20 +1395,7 @@
             shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
         });
 
-        function toggleMap() {
-            const container = document.getElementById('mapContainer');
-            if (!container) return;
 
-            const isOpening = container.style.height === '0px' || !container.style.height;
-            container.style.height = isOpening ? '250px' : '0px';
-
-            if (isOpening) {
-                setTimeout(() => {
-                    initMap();
-                    if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                }, 300);
-            }
-        }
 
         function initMap() {
             if (map) {

@@ -114,8 +114,9 @@ async def admin_dashboard_callback(callback: types.CallbackQuery):
         return await callback.answer("Sizda admin huquqi yo'q.", show_alert=True)
         
     is_super = admin[1] == 'super_admin'
+    perms = admin[2] if admin[2] else ""
     text = build_admin_dashboard_text(user_id)
-    await callback.message.edit_text(text, reply_markup=admin_profile_kb(is_super), parse_mode="Markdown")
+    await callback.message.edit_text(text, reply_markup=admin_profile_kb(is_super, perms), parse_mode="Markdown")
     await callback.answer()
 
 
@@ -309,8 +310,9 @@ async def admin_dashboard_msg(message: types.Message):
         return await message.answer("Sizda admin huquqi yo'q.")
     
     is_super = admin[1] == 'super_admin'
+    perms = admin[2] if admin[2] else ""
     text = build_admin_dashboard_text(message.from_user.id)
-    await message.answer(text, reply_markup=akb.admin_reply_menu(is_super), parse_mode="Markdown")
+    await message.answer(text, reply_markup=akb.admin_reply_menu(is_super, perms), parse_mode="Markdown")
 
 @router.message(F.text == "📑 Hisobot (Excel)")
 async def admin_report_msg(message: types.Message):
@@ -525,8 +527,9 @@ async def admin_back_home_msg(message: types.Message):
     if not admin: return
     
     is_super = admin[1] == 'super_admin'
+    perms = admin[2] if admin[2] else ""
     from keyboards.admin_keyboards import admin_reply_menu
-    await message.answer("Asosiy panelga qaytdingiz.", reply_markup=admin_reply_menu(is_super))
+    await message.answer("Asosiy panelga qaytdingiz.", reply_markup=admin_reply_menu(is_super, perms))
     await admin_dashboard_msg(message)
 
 # --- Product Management Handlers ---
@@ -636,7 +639,8 @@ async def admin_cancel(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
     admin = db.get_admin(callback.from_user.id)
     is_super = admin[1] == 'super_admin' if admin else False
-    await callback.message.edit_text("Amal bekor qilindi.", reply_markup=admin_profile_kb(is_super))
+    perms = admin[2] if admin and admin[2] else ""
+    await callback.message.edit_text("Amal bekor qilindi.", reply_markup=admin_profile_kb(is_super, perms))
     await callback.answer()
 
 # --- Product Edit Handler ---
@@ -681,7 +685,10 @@ async def admin_edit_price_save(message: types.Message, state: FSMContext):
     from utils.publisher import publish_menu
     publish_menu()
 
-    await message.answer(f"✅ Narx o'zgartirildi: {message.text} so'm", reply_markup=admin_profile_kb(True))
+    admin = db.get_admin(message.from_user.id)
+    is_super = admin[1] == 'super_admin' if admin else False
+    perms = admin[2] if admin and admin[2] else ""
+    await message.answer(f"✅ Narx o'zgartirildi: {message.text} so'm", reply_markup=admin_profile_kb(is_super, perms))
     await state.clear()
 
 @router.callback_query(F.data.startswith("admin_del_sel_"))
@@ -730,7 +737,10 @@ async def admin_add_promo_discount(message: types.Message, state: FSMContext):
         return await message.answer("Iltimos, faqat raqam kiriting!")
     data = await state.get_data()
     db.create_promo_code(data['code'], int(message.text))
-    await message.answer(f"✅ Promo kod qo'shildi: {data['code']} ({message.text}%)", reply_markup=admin_profile_kb(True))
+    admin = db.get_admin(message.from_user.id)
+    is_super = admin[1] == 'super_admin' if admin else False
+    perms = admin[2] if admin and admin[2] else ""
+    await message.answer(f"✅ Promo kod qo'shildi: {data['code']} ({message.text}%)", reply_markup=admin_profile_kb(is_super, perms))
     await state.clear()
 
 @router.callback_query(F.data == "admin_list_promo")

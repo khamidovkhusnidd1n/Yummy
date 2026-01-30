@@ -1,7 +1,11 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
-def admin_profile_kb(is_super=False):
+def admin_profile_kb(is_super=False, perms_str=""):
     kb = []
+    perms = perms_str.split(',') if perms_str else []
+    
+    # Dashboard and Orders are usually basic for any admin with any permission
+    # but we can restrict them too if needed. For now, they seem common.
     kb.append([
         InlineKeyboardButton(text="📊 Dashboard", callback_data="admin_dashboard"),
         InlineKeyboardButton(text="🛍 Buyurtmalar", callback_data="admin_orders")
@@ -19,14 +23,34 @@ def admin_profile_kb(is_super=False):
         ])
         kb.append([InlineKeyboardButton(text="👥 Adminlar Boshqaruvi", callback_data="admin_admins")])
     else:
-        kb.append([InlineKeyboardButton(text="📦 Buyurtmalar (Worker)", callback_data="worker_info")])
+        # Granular permissions for regular admins
+        if 'menu' in perms:
+            kb.append([InlineKeyboardButton(text="🍽 Menu Boshqaruvi", callback_data="admin_menu_manage")])
+        
+        mid_row = []
+        if 'promos' in perms:
+            mid_row.append(InlineKeyboardButton(text="🎟 Promolar", callback_data="admin_promo_manage"))
+        if 'mailing' in perms:
+            mid_row.append(InlineKeyboardButton(text="📢 Mailing", callback_data="admin_mailing"))
+        if mid_row: kb.append(mid_row)
+        
+        stats_row = []
+        if 'stats' in perms:
+            stats_row.append(InlineKeyboardButton(text="📉 Statistika", callback_data="admin_stats"))
+            stats_row.append(InlineKeyboardButton(text="📑 Hisobot (Excel)", callback_data="admin_report"))
+        if stats_row: kb.append(stats_row)
+
+        if not any(x in perms for x in ['menu', 'promos', 'mailing', 'stats']):
+            kb.append([InlineKeyboardButton(text="📦 Buyurtmalar (Worker)", callback_data="worker_info")])
     
     kb.append([InlineKeyboardButton(text="🏠 Foydalanuvchi menyusi", callback_data="back_to_main")])
     
     return InlineKeyboardMarkup(inline_keyboard=kb)
 
-def admin_reply_menu(is_super=False):
+def admin_reply_menu(is_super=False, perms_str=""):
     kb = []
+    perms = perms_str.split(',') if perms_str else []
+
     if is_super:
         kb.append([KeyboardButton(text="📊 Dashboard"), KeyboardButton(text="🛍 Buyurtmalar")])
         kb.append([KeyboardButton(text="🍽 Menu Boshqaruvi")])
@@ -34,7 +58,25 @@ def admin_reply_menu(is_super=False):
         kb.append([KeyboardButton(text="📉 Statistika"), KeyboardButton(text="📑 Hisobot (Excel)")])
         kb.append([KeyboardButton(text="👥 Adminlar Boshqaruvi")])
     else:
-        kb.append([KeyboardButton(text="🛍 Buyurtmalar"), KeyboardButton(text="📦 Worker Info")])
+        kb.append([KeyboardButton(text="📊 Dashboard"), KeyboardButton(text="🛍 Buyurtmalar")])
+        
+        if 'menu' in perms:
+            kb.append([KeyboardButton(text="🍽 Menu Boshqaruvi")])
+        
+        mid_row = []
+        if 'promos' in perms: mid_row.append(KeyboardButton(text="🎟 Promolar"))
+        if 'mailing' in perms: mid_row.append(KeyboardButton(text="📢 Mailing"))
+        if mid_row: kb.append(mid_row)
+        
+        stats_row = []
+        if 'stats' in perms:
+            stats_row.append(KeyboardButton(text="📉 Statistika"))
+            stats_row.append(KeyboardButton(text="📑 Hisobot (Excel)"))
+        if stats_row: kb.append(stats_row)
+
+        if not any(x in perms for x in ['menu', 'promos', 'mailing', 'stats']):
+            kb.append([KeyboardButton(text="📦 Worker Info")])
+
     kb.append([KeyboardButton(text="🏠 Foydalanuvchi menyusi")])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 

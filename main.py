@@ -7,6 +7,7 @@ import json
 from aiogram import Bot, Dispatcher
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp import web
+import aiohttp
 from config import BOT_TOKEN
 from handlers import user_handlers, admin_handlers
 from database import db
@@ -161,6 +162,7 @@ def main():
     # Always run the scheduler
     async def on_startup_scheduler(bot: Bot):
         asyncio.create_task(daily_report_scheduler(bot))
+        asyncio.create_task(self_ping_scheduler())
     dp.startup.register(on_startup_scheduler)
 
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
@@ -233,6 +235,32 @@ async def daily_report_scheduler(bot: Bot):
         except Exception as e:
             print(f"Error in daily_report_scheduler: {e}")
             await asyncio.sleep(60) # Wait a minute before retrying if error
+
+async def self_ping_scheduler():
+    """Keep the bot awake by pinging its own URL every 10 minutes"""
+    url = os.getenv("RENDER_EXTERNAL_URL")
+    if not url:
+        # If not on Render, try to construct it or skip
+        print("Self-ping: RENDER_EXTERNAL_URL not set, skipping...")
+        return
+        
+    print(f"Self-ping scheduler started for {url}")
+    
+    while True:
+        try:
+            # Wait 10 minutes (600 seconds)
+            await asyncio.sleep(600)
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        print(f"Self-ping successful at {datetime.now()}")
+                    else:
+                        print(f"Self-ping returned status {response.status} at {datetime.now()}")
+        except Exception as e:
+            print(f"Self-ping error: {e}")
+            # Wait a bit before retrying if there's an error
+            await asyncio.sleep(60)
 
 if __name__ == "__main__":
     try:

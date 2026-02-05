@@ -191,6 +191,20 @@ class Database:
         pass
 
     # --- Product Management ---
+    def add_category(self, name_uz, name_ru=None, name_en=None):
+        if not name_ru: name_ru = name_uz
+        if not name_en: name_en = name_uz
+        self.cursor.execute("INSERT INTO categories (name_uz, name_ru, name_en) VALUES (?, ?, ?)",
+                            (name_uz, name_ru, name_en))
+        self.conn.commit()
+        return self.cursor.lastrowid
+
+    def delete_category(self, category_id):
+        # Delete products first or the database will have orphaned products if foreign keys are not enforced (they are defined though)
+        self.cursor.execute("DELETE FROM products WHERE category_id = ?", (category_id,))
+        self.cursor.execute("DELETE FROM categories WHERE id = ?", (category_id,))
+        self.conn.commit()
+
     def add_product(self, category_id, name, price, image):
         self.cursor.execute("INSERT INTO products (category_id, name, price, image) VALUES (?, ?, ?, ?)",
                             (category_id, name, price, image))

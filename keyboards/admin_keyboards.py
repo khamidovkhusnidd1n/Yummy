@@ -83,6 +83,10 @@ def admin_reply_menu(is_super=False, perms_str=""):
 def menu_manage_kb():
     kb = [
         [InlineKeyboardButton(text="🔄 JS -> DB Sync", callback_data="admin_sync_js")],
+        [
+            InlineKeyboardButton(text="➕ Kat. qo'shish", callback_data="admin_add_cat"),
+            InlineKeyboardButton(text="🗑 Kat. o'chirish", callback_data="admin_del_cat")
+        ],
         [InlineKeyboardButton(text="➕ Yangi taom qo'shish", callback_data="admin_add_prod")],
         [InlineKeyboardButton(text="✏️ Narxlarni tahrirlash", callback_data="admin_edit_price")],
         [InlineKeyboardButton(text="🗑 Taomni o'chirish", callback_data="admin_del_prod")],
@@ -93,6 +97,7 @@ def menu_manage_kb():
 
 def menu_manage_reply_kb():
     kb = [
+        [KeyboardButton(text="➕ Yangi kategoriya"), KeyboardButton(text="🗑 Kategoriyani o'chirish")],
         [KeyboardButton(text="➕ Yangi taom qo'shish")],
         [KeyboardButton(text="✏️ Narxlarni tahrirlash"), KeyboardButton(text="🗑 Taomni o'chirish")],
         [KeyboardButton(text="🚀 Saytga chiqarish (Update)")],

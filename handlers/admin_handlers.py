@@ -22,6 +22,10 @@ class AdminStates(StatesGroup):
     adding_product_price = State()  # Second
     adding_product_image = State()  # Third (last)
     
+    adding_category_name_uz = State()
+    adding_category_name_ru = State()
+    adding_category_name_en = State()
+    
     editing_price_value = State()
     
     # Promo States
@@ -703,6 +707,79 @@ async def admin_del_prod_selected(callback: types.CallbackQuery):
     publish_menu()
 
     await callback.message.answer("✅ Taom o'chirildi.")
+    await admin_menu_manage_callback(callback)
+    await callback.answer()
+
+# --- Category Management Handlers ---
+
+@router.callback_query(F.data == "admin_add_cat")
+@router.message(F.text == "➕ Yangi kategoriya")
+async def admin_add_cat_start(event: types.CallbackQuery | types.Message, state: FSMContext):
+    if not db.has_permission(event.from_user.id, 'menu'):
+        if isinstance(event, types.CallbackQuery): await event.answer("Ruxsat yo'q.", show_alert=True)
+        return
+    
+    message = event if isinstance(event, types.Message) else event.message
+    await message.answer("📝 Yangi kategoriya nomini kiriting (**O'zbekcha**):", reply_markup=akb.cancel_kb())
+    await state.set_state(AdminStates.adding_category_name_uz)
+    if isinstance(event, types.CallbackQuery): await event.answer()
+
+@router.message(AdminStates.adding_category_name_uz)
+async def admin_add_cat_uz(message: types.Message, state: FSMContext):
+    await state.update_data(name_uz=message.text)
+    await message.answer("📝 Kategoriya nomini kiriting (**Ruscha**):", reply_markup=akb.cancel_kb())
+    await state.set_state(AdminStates.adding_category_name_ru)
+
+@router.message(AdminStates.adding_category_name_ru)
+async def admin_add_cat_ru(message: types.Message, state: FSMContext):
+    await state.update_data(name_ru=message.text)
+    await message.answer("📝 Kategoriya nomini kiriting (**Inglizcha**):", reply_markup=akb.cancel_kb())
+    await state.set_state(AdminStates.adding_category_name_en)
+
+@router.message(AdminStates.adding_category_name_en)
+async def admin_add_cat_save(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    name_uz = data['name_uz']
+    name_ru = data['name_ru']
+    name_en = message.text
+    
+    db.add_category(name_uz, name_ru, name_en)
+    
+    # Sync WebApp
+    from utils.publisher import publish_menu
+    publish_menu()
+    
+    await message.answer(f"✅ Yangi kategoriya qo'shildi: {name_uz} / {name_ru} / {name_en}", reply_markup=akb.menu_manage_reply_kb())
+    await state.clear()
+
+@router.callback_query(F.data == "admin_del_cat")
+@router.message(F.text == "🗑 Kategoriyani o'chirish")
+async def admin_del_cat_start(event: types.CallbackQuery | types.Message):
+    if not db.has_permission(event.from_user.id, 'menu'):
+        if isinstance(event, types.CallbackQuery): await event.answer("Ruxsat yo'q.", show_alert=True)
+        return
+    
+    cats = db.get_all_categories()
+    kb = []
+    for cat in cats:
+        kb.append([InlineKeyboardButton(text=f"❌ {cat[1]}", callback_data=f"admin_confirm_del_cat_{cat[0]}")])
+    kb.append([InlineKeyboardButton(text="🔙 Bekor qilish", callback_data="admin_menu_manage")])
+    
+    message = event if isinstance(event, types.Message) else event.message
+    await message.answer("⚠️ **DIQQAT!** Kategoriyani o'chirsangiz, undagi barcha taomlar ham o'chib ketadi.\n\nO'chirmoqchi bo'lgan kategoriyangizni tanlang:", 
+                         reply_markup=InlineKeyboardMarkup(inline_keyboard=kb), parse_mode="Markdown")
+    if isinstance(event, types.CallbackQuery): await event.answer()
+
+@router.callback_query(F.data.startswith("admin_confirm_del_cat_"))
+async def admin_del_cat_confirm(callback: types.CallbackQuery):
+    cat_id = int(callback.data.split("_")[4])
+    db.delete_category(cat_id)
+    
+    # Sync WebApp
+    from utils.publisher import publish_menu
+    publish_menu()
+    
+    await callback.message.answer("✅ Kategoriya va undagi barcha taomlar o'chirildi.")
     await admin_menu_manage_callback(callback)
     await callback.answer()
 

@@ -48,7 +48,7 @@ MENU_DATA = {
     "🥪 Xaggi": [
         {"n": "Standart", "p": 35000, "i": "images/image2/xaggi.jpg"},
         {"n": "Big", "p": 45000, "i": "images/image2/images3/xagi_big.jpg"},
-        {"n": "Xot let", "p": 28000, "i": "images/image2/images3/xagi.jpg"}
+        {"n": "Xot let", "p": 28000, "i": "images/image2/images3/xagi_big.jpg"}
     ],
     "🍗 Naggets": [
         {"n": "Naggets", "p": 22000, "i": "images/naggets.jpg"},

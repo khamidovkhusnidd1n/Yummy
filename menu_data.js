@@ -112,7 +112,7 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Mini",
             "p": 10000,
-            "i": "images/image2/hot_dog.jpg"
+            "i": "images/hotdog.jpg"
         },
         {
             "n": "Twins",
@@ -144,12 +144,12 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Big",
             "p": 45000,
-            "i": "images/image2/images3/xaggi_big.jpg"
+            "i": "images/image2/images3/xagi_big.jpg"
         },
         {
             "n": "Xot let",
             "p": 28000,
-            "i": "images/image2/images3/xaggi.jpg"
+            "i": "images/image2/images3/xagi.jpg"
         }
     ],
     "🍗 Naggets": [

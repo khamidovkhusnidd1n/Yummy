@@ -39,7 +39,7 @@ MENU_DATA = {
         {"n": "Kfc xaggi", "p": 30000, "i": "images/image2/images3/KFC_xaggi.jpg"}
     ],
     "🌭 Xot-dog": [
-        {"n": "Mini", "p": 10000, "i": "images/image2/hot_dog.jpg"},
+        {"n": "Mini", "p": 10000, "i": "images/hotdog.jpg"},
         {"n": "Twins", "p": 17000, "i": "images/image2/images3/twins.jpg"},
         {"n": "Big (45sm)", "p": 22000, "i": "images/image2/images3/hotdogbig.jpg"},
         {"n": "Super (45sm)", "p": 25000, "i": "images/image2/hot_dog.jpg"},
@@ -47,8 +47,8 @@ MENU_DATA = {
     ],
     "🥪 Xaggi": [
         {"n": "Standart", "p": 35000, "i": "images/image2/xaggi.jpg"},
-        {"n": "Big", "p": 45000, "i": "images/image2/images3/xaggi_big.jpg"},
-        {"n": "Xot let", "p": 28000, "i": "images/image2/images3/xaggi.jpg"}
+        {"n": "Big", "p": 45000, "i": "images/image2/images3/xagi_big.jpg"},
+        {"n": "Xot let", "p": 28000, "i": "images/image2/images3/xagi.jpg"}
     ],
     "🍗 Naggets": [
         {"n": "Naggets", "p": 22000, "i": "images/naggets.jpg"},

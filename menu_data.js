@@ -149,7 +149,7 @@ window.DYNAMIC_MENU_DATA = {
         {
             "n": "Xot let",
             "p": 28000,
-            "i": "images/image2/images3/xagi.jpg"
+            "i": "images/image2/images3/xagi_big.jpg"
         }
     ],
     "🍗 Naggets": [
